@@ -9,7 +9,6 @@ import { frontendURL } from '../../helper/URLHelper';
 import helpcenterRoutes from './helpcenter/helpcenter.routes';
 import campaignsRoutes from './campaigns/campaigns.routes';
 import { routes as captainRoutes } from './captain/captain.routes';
-import { routes as kanbanRoutes } from './kanban/kanban.routes';
 import dashboardAppsRoutes from './dashboardApps/dashboardApps.routes';
 import internalChatRoutes from './internalChat/internalChat.routes';
 import AppContainer from './Dashboard.vue';
@@ -17,14 +16,17 @@ import Suspended from './suspended/Index.vue';
 import NoAccounts from './noAccounts/Index.vue';
 import OnboardingAccountDetails from './onboarding/Index.vue';
 
+const captainEnabled =
+  window.globalConfig?.CAPTAIN_ENABLED === true ||
+  window.globalConfig?.CAPTAIN_ENABLED === 'true';
+
 export default {
   routes: [
     {
       path: frontendURL('accounts/:accountId'),
       component: AppContainer,
       children: [
-        ...captainRoutes,
-        ...kanbanRoutes,
+        ...(captainEnabled ? captainRoutes : []),
         ...inboxRoutes,
         ...conversation.routes,
         ...settings.routes,

@@ -27,6 +27,10 @@ import security from './security/security.routes';
 import conversationWorkflow from './conversationWorkflow/conversationWorkflow.routes';
 import captain from './captain/captain.routes';
 
+const captainEnabled =
+  window.globalConfig?.CAPTAIN_ENABLED === true ||
+  window.globalConfig?.CAPTAIN_ENABLED === 'true';
+
 export default {
   routes: [
     {
@@ -66,6 +70,6 @@ export default {
     ...profile.routes,
     ...security.routes,
     ...conversationWorkflow.routes,
-    ...captain.routes,
+    ...(captainEnabled ? captain.routes : []),
   ],
 };
