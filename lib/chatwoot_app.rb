@@ -17,6 +17,10 @@ module ChatwootApp
     @enterprise ||= root.join('enterprise').exist?
   end
 
+  def self.captain_enabled?
+    enterprise? && ActiveModel::Type::Boolean.new.cast(ENV.fetch('CAPTAIN_ENABLED', false))
+  end
+
   def self.chatwoot_cloud?
     enterprise? && GlobalConfig.get_value('DEPLOYMENT_ENV') == 'cloud'
   end

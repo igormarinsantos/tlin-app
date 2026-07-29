@@ -2,6 +2,7 @@ name: Run Chatwoot CE spec
 permissions:
   contents: read
 on:
+  pull_request:
   push:
     tags:
       - '*'

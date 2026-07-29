@@ -62,35 +62,37 @@ Rails.application.routes.draw do
           resources :agents, only: [:index, :create, :update, :destroy] do
             post :bulk_create, on: :collection
           end
-          namespace :captain do
-            resource :preferences, only: [:show, :update]
-            resources :assistants do
-              member do
-                post :playground
+          if ChatwootApp.captain_enabled?
+            namespace :captain do
+              resource :preferences, only: [:show, :update]
+              resources :assistants do
+                member do
+                  post :playground
+                end
+                collection do
+                  get :tools
+                end
+                resources :inboxes, only: [:index, :create, :destroy], param: :inbox_id
+                resources :scenarios
               end
-              collection do
-                get :tools
+              resources :assistant_responses
+              resources :bulk_actions, only: [:create]
+              resources :copilot_threads, only: [:index, :create] do
+                resources :copilot_messages, only: [:index, :create]
               end
-              resources :inboxes, only: [:index, :create, :destroy], param: :inbox_id
-              resources :scenarios
-            end
-            resources :assistant_responses
-            resources :bulk_actions, only: [:create]
-            resources :copilot_threads, only: [:index, :create] do
-              resources :copilot_messages, only: [:index, :create]
-            end
-            resources :custom_tools do
-              post :test, on: :collection
-            end
-            resources :documents, only: [:index, :show, :create, :destroy] do
-              post :sync, on: :member
-            end
-            resource :tasks, only: [], controller: 'tasks' do
-              post :rewrite
-              post :summarize
-              post :reply_suggestion
-              post :label_suggestion
-              post :follow_up
+              resources :custom_tools do
+                post :test, on: :collection
+              end
+              resources :documents, only: [:index, :show, :create, :destroy] do
+                post :sync, on: :member
+              end
+              resource :tasks, only: [], controller: 'tasks' do
+                post :rewrite
+                post :summarize
+                post :reply_suggestion
+                post :label_suggestion
+                post :follow_up
+              end
             end
           end
           resource :saml_settings, only: [:show, :create, :update, :destroy]
