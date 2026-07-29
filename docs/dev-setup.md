@@ -10,7 +10,7 @@ Este guia foi conferido contra os arquivos atuais do repositório. O caminho mai
 
 ## Variáveis mínimas
 
-Copie `.env.example` para `.env` e defina ao menos:
+Copie `.env.example` para `.env`, gere um `SECRET_KEY_BASE` próprio e defina ao menos:
 
 ```dotenv
 SECRET_KEY_BASE=<saída de bundle exec rails secret>
@@ -26,7 +26,7 @@ DISABLE_ENTERPRISE=true
 CAPTAIN_ENABLED=false
 ```
 
-`DISABLE_ENTERPRISE=true` é o modo Tlin; `CAPTAIN_ENABLED=false` é redundante nesse modo, mas deixa a intenção explícita. Não configure chaves de OpenAI/Captain para a etapa 0.
+`DISABLE_ENTERPRISE=true` é o modo Tlin; `CAPTAIN_ENABLED=false` é redundante nesse modo, mas deixa a intenção explícita. Não configure chaves de OpenAI/Captain para a etapa 0. Depois de carregar as variáveis de branding, execute `bundle exec rails branding:update` para gravar a configuração Tlin na instalação.
 
 ## Subir com Docker (recomendado)
 
