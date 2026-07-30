@@ -29,6 +29,7 @@ master.key
 
 # Ignore env files
 .env
+.env.development
 
 public/uploads
 public/packs*
