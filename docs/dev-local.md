@@ -26,6 +26,7 @@ Use a saída do segundo comando em `SECRET_KEY_BASE` e mantenha, no mínimo, est
 RAILS_ENV=development
 SECRET_KEY_BASE=<chave-gerada>
 FRONTEND_URL=http://localhost:3001
+PORT=3001
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_USERNAME=postgres
