@@ -70,3 +70,10 @@ Foi executado `rg -n -i -e 'chatwoot|upgrade|billing|pricing|woot\\.com'` em `ap
 As ocorrências de localização en/pt-BR restantes se dividem em: textos de produtos enterprise (Captain, Kanban, billing, SAML, SLA, roles e relatórios), que não são alcançáveis em modo community; e textos de produto que ainda citam o nome upstream, registrados como dívida em vez de alterar componentes ou fluxos do core.
 
 `LICENSE` na raiz permanece MIT e não foi alterado. `enterprise/LICENSE` também permanece intacto; nenhum código enterprise foi ativado por esta configuração.
+
+## Build no Coolify
+
+`docker/Dockerfile` trata a geração de `/app/.git_sha` como opcional: quando o
+contexto de build do Coolify não inclui `.git`, grava `unknown` em vez de falhar.
+Esta é uma divergência mínima e intencional do upstream; revalidar esse trecho em
+todo merge futuro do upstream.
