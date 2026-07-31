@@ -1,12 +1,26 @@
 # Desenvolvimento local no WSL (Rails + Vite com hot-reload)
 
+## Docker Engine nativo no WSL
+
+Em uma nova sessao WSL, confirme que o daemon esta disponivel antes de subir os servicos:
+
+```bash
+docker info
+```
+
+Se ele nao estiver em execucao, inicie-o com:
+
+```bash
+sudo service docker start
+```
+
 Este fluxo executa somente PostgreSQL e Redis no Docker. Rails e Vite rodam diretamente no Ubuntu/WSL, tornando a alteração de Ruby, Vue e CSS imediata. A aplicação Tlin fica em `http://localhost:3001`; Vite/HMR permanece em `http://localhost:3036`.
 
 > Execute todos os comandos a seguir no terminal Ubuntu/WSL, na raiz do clone Linux do repositório. Evite desenvolver em `/mnt/c/...`: manter o repositório no filesystem Linux reduz problemas de performance de watch e permissões.
 
 ## Pré-requisitos
 
-- Docker Desktop com integração WSL habilitada e `docker compose` disponível no Ubuntu.
+- Docker Engine nativo e `docker compose` disponíveis no Ubuntu/WSL.
 - Ruby `3.4.4` (veja `.ruby-version`) com as dependências de compilação do projeto.
 - Node `24.13.0` (veja `.nvmrc`) e Corepack.
 - PostgreSQL e Redis **não** precisam estar instalados no host: serão serviços Docker.
@@ -32,7 +46,8 @@ POSTGRES_PORT=5432
 POSTGRES_USERNAME=postgres
 POSTGRES_PASSWORD=
 POSTGRES_DATABASE=tlin_app_dev
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://localhost:6380
+REDIS_PORT=6380
 REDIS_PASSWORD=
 DISABLE_ENTERPRISE=true
 CAPTAIN_ENABLED=false

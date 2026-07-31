@@ -90,9 +90,9 @@ services:
     volumes:
       - postgres:/data/postgres
     environment:
-      - POSTGRES_DB=chatwoot
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=${POSTGRES_DATABASE:-chatwoot}
+      - POSTGRES_USER=${POSTGRES_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}
 
   redis:
     image: redis:alpine
@@ -104,7 +104,7 @@ services:
     volumes:
       - redis:/data/redis
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT:-6379}:6379'
 
   mailhog:
     image: mailhog/mailhog
