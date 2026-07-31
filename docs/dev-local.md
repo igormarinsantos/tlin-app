@@ -109,6 +109,17 @@ bin/vite dev
 
 Abra `http://localhost:3001`. O browser recebe a página do Rails nessa porta e conecta o HMR ao Vite em `3036`; essa separação é esperada e não depende de deploy.
 
+### Executar em background
+
+Para manter os dois processos ativos após fechar o terminal WSL, execute na raiz do repositório:
+
+```bash
+setsid -f bundle exec rails server -p 3001 -b 0.0.0.0 > tmp/tlin-rails.log 2>&1
+setsid -f pnpm vite dev > tmp/tlin-vite.log 2>&1
+```
+
+Valide a aplicação com `curl -s http://localhost:3001/app/login | grep -iE '<title>|chatwoot|tlin'`. Os logs ficam em `tmp/tlin-rails.log` e `tmp/tlin-vite.log`.
+
 Para parar apenas as dependências Docker ao final do trabalho:
 
 ```bash
