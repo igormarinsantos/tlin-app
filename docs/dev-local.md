@@ -27,6 +27,8 @@ Este fluxo executa somente PostgreSQL e Redis no Docker. Rails e Vite rodam dire
 
 ## Preparar a cópia local
 
+O exemplo de ambiente desativa Bullet e os query traces detalhados apenas no desenvolvimento para manter a navegação local responsiva. Para investigar N+1 em uma sessão pontual, remova `DISABLE_BULLET=true` e defina `VERBOSE_QUERY_LOGS=true`.
+
 O arquivo `.env.development` é local e ignorado pelo Git. Ele já foi preparado com `FRONTEND_URL=http://localhost:3001`, banco/Redis em `localhost`, modo community e branding Tlin. Caso recrie o arquivo, gere uma chave nova e preserve os placeholders comentados do Baileys:
 
 ```bash
