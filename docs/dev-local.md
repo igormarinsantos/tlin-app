@@ -122,6 +122,17 @@ setsid -f pnpm vite dev > tmp/tlin-vite.log 2>&1
 
 Valide a aplicação com `curl -s http://localhost:3001/app/login | grep -iE '<title>|chatwoot|tlin'`. Os logs ficam em `tmp/tlin-rails.log` e `tmp/tlin-vite.log`.
 
+### Modo rápido no navegador (assets compilados)
+
+O dashboard possui muitos módulos. Para testar a navegação sem o custo de HMR e de compilação sob demanda do Vite, pare o Vite, gere os assets estáticos e mantenha apenas Rails e Sidekiq ativos:
+
+```bash
+NODE_OPTIONS=--max-old-space-size=4096 bin/vite build --mode development
+bundle exec sidekiq -C config/sidekiq.yml
+```
+
+Rails servirá os arquivos prontos de `public/vite-dev`. Para voltar ao hot-reload, execute novamente `bin/vite dev`; o Rails detecta o servidor Vite automaticamente.
+
 Para parar apenas as dependências Docker ao final do trabalho:
 
 ```bash
