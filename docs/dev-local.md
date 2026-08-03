@@ -55,6 +55,31 @@ Os logs persistentes ficam em `tmp/dev-local/rails.log`, `tmp/dev-local/vite.log
 ./dev.sh down
 ```
 
+## Escolher o modo de frontend
+
+`./dev.sh up` mantém o Vite em modo HMR: alterações de Vue, CSS e tokens aparecem sem recarregar a página, mas o navegador recebe muitos módulos ES separados. É o modo adequado enquanto estiver editando continuamente.
+
+Para ajustes visuais em que o fluxo é **editar, gerar e apertar F5 várias vezes**, use o preview compilado:
+
+```bash
+./dev.sh build-preview
+```
+
+Ele encerra somente o Vite de desenvolvimento, gera `public/vite-dev` uma vez e mantém Rails + Sidekiq ativos. As recargas passam a usar assets prontos, sem recompilação de módulos sob demanda. O build fica em `tmp/dev-local/vite-build.log`.
+O launcher reserva `4 GB` para o Node durante esse build, pois o dashboard completo pode exceder o heap padrão de 2 GB ao gerar chunks.
+
+Para apenas subir um preview que já foi compilado, sem reconstruir:
+
+```bash
+./dev.sh preview
+```
+
+Para voltar ao HMR após editar novamente, execute:
+
+```bash
+./dev.sh up
+```
+
 O launcher somente encerra processos cuja pasta de trabalho é este checkout. Se outra aplicação estiver usando a porta 3001 ou 3036, ele para com uma mensagem que informa PID e diretório, em vez de encerrá-la.
 
 ## Troubleshooting
