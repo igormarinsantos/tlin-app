@@ -992,7 +992,7 @@ const menuItems = computed(() => {
     </section>
     <nav
       class="grid overflow-y-scroll flex-grow gap-2 pb-5 no-scrollbar min-w-0"
-      :class="isEffectivelyCollapsed ? 'px-1' : 'px-2'"
+      :class="isEffectivelyCollapsed ? 'px-1' : 'px-3'"
     >
       <ul
         class="flex flex-col gap-1 m-0 list-none min-w-0"

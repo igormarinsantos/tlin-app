@@ -263,12 +263,11 @@ watch(
           ref="triggerRef"
           :to="to && !hasChildren ? to : undefined"
           type="button"
-          class="flex items-center justify-center size-10"
+          class="flex items-center justify-center size-10 rounded-full"
           :class="{
             'text-n-black bg-tlin-gradient rounded-full':
               isActive || hasActiveChild,
             'text-n-slate-11 hover:bg-n-alpha-2': !isActive && !hasActiveChild,
-            'rounded-lg': !isActive && !hasActiveChild,
           }"
           :title="label"
           @click="hasChildren ? handleCollapsedClick() : undefined"
