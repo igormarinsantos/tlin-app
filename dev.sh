@@ -28,20 +28,15 @@ compose() {
 
 stop_app_port() {
   local port="$1" pid cwd
-  pid="$(sudo lsof -ti ":$port" 2>/dev/null | head -n 1 || true)"
+  pid="$(sudo lsof -tiTCP:"$port" -sTCP:LISTEN 2>/dev/null | head -n 1 || true)"
   [[ -n "$pid" ]] || return 0
   cwd="$(readlink -f "/proc/$pid/cwd" 2>/dev/null || true)"
   [[ "$cwd" == "$ROOT" ]] || die "a porta $port está ocupada por outro processo (PID $pid, diretório ${cwd:-desconhecido})"
-  kill "$pid" 2>/dev/null || true
-  for _ in {1..2}; do
-    sudo lsof -ti ":$port" >/dev/null 2>&1 || return 0
-    sleep 1
-  done
-  # Puma may be finishing in-flight requests. It is safe to force only this
-  # checkout's process after the graceful grace period has elapsed.
+  # The process was verified above as belonging to this checkout. Stop it
+  # deterministically so `down`/`up` cannot leave a stale local server behind.
   kill -KILL "$pid" 2>/dev/null || true
   for _ in {1..15}; do
-    sudo lsof -ti ":$port" >/dev/null 2>&1 || return 0
+    ss -Hltn "sport = :$port" | grep -q . || return 0
     sleep 1
   done
   die "não foi possível liberar a porta $port"
@@ -49,7 +44,7 @@ stop_app_port() {
 
 port_is_owned_by_this_checkout() {
   local port="$1" pid cwd
-  pid="$(sudo lsof -ti ":$port" 2>/dev/null | head -n 1 || true)"
+  pid="$(sudo lsof -tiTCP:"$port" -sTCP:LISTEN 2>/dev/null | head -n 1 || true)"
   [[ -n "$pid" ]] || return 1
   cwd="$(readlink -f "/proc/$pid/cwd" 2>/dev/null || true)"
   [[ "$cwd" == "$ROOT" ]] || die "a porta $port está ocupada por outro processo (PID $pid, diretório ${cwd:-desconhecido})"
@@ -89,11 +84,11 @@ start_processes() {
   # A different checkout on either reserved port is reported instead of killed.
   if ! port_is_owned_by_this_checkout "$RAILS_PORT"; then
     setsid -f "$MISE_BIN" exec ruby@3.4.4 node@24.13.0 -- \
-      bundle exec rails server -b 127.0.0.1 -p "$RAILS_PORT" >"$LOG_DIR/rails.log" 2>&1
+      bundle exec rails server -b 0.0.0.0 -p "$RAILS_PORT" >"$LOG_DIR/rails.log" 2>&1
   fi
   if ! port_is_owned_by_this_checkout "$VITE_PORT"; then
     setsid -f "$MISE_BIN" exec ruby@3.4.4 node@24.13.0 -- \
-      pnpm vite dev --host 127.0.0.1 --port "$VITE_PORT" >"$LOG_DIR/vite.log" 2>&1
+      pnpm vite dev --host 0.0.0.0 --port "$VITE_PORT" >"$LOG_DIR/vite.log" 2>&1
   fi
   if ! sidekiq_is_owned_by_this_checkout; then
     setsid -f "$MISE_BIN" exec ruby@3.4.4 node@24.13.0 -- \

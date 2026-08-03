@@ -41,7 +41,7 @@ Em qualquer terminal WSL, dentro de `~/tlin-app`:
 ./dev.sh up
 ```
 
-Abra [http://127.0.0.1:3001/app/login](http://127.0.0.1:3001/app/login). Vite fica em modo de desenvolvimento na porta `3036`, com HMR; Rails atende somente em `127.0.0.1:3001`, evitando conflito com outros projetos e o caminho IPv6 quebrado de `localhost`.
+Abra [http://127.0.0.1:3001/app/login](http://127.0.0.1:3001/app/login). Vite fica em modo de desenvolvimento na porta `3036`, com HMR; Rails e Vite fazem bind em `0.0.0.0` para que o encaminhamento Windows ↔ WSL e o acesso pelo IP interno do WSL funcionem. A URL IPv4 continua sendo a mais confiável no navegador Windows.
 
 Para verificar tudo sem tentativa e erro:
 
