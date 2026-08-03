@@ -52,6 +52,10 @@ const isACustomBrandedInstance = useMapGetter(
 );
 const isRTL = useMapGetter('accounts/isRTL');
 
+const captainEnabled =
+  window.globalConfig?.CAPTAIN_ENABLED === true ||
+  window.globalConfig?.CAPTAIN_ENABLED === 'true';
+
 const { width: windowWidth } = useWindowSize();
 const isMobile = computed(() => windowWidth.value < 768);
 
@@ -863,6 +867,13 @@ const menuItems = computed(() => {
       ],
     },
   ];
+
+  // Captain routes are not registered when the installation disables Captain.
+  // Remove its sidebar group as well so route resolution cannot crash the app.
+  if (!captainEnabled) {
+    const captainIndex = items.findIndex(item => item.name === 'Captain');
+    items.splice(captainIndex, 1);
+  }
 
   if (dashboardApps.value.length > 0) {
     const settingsIndex = items.findIndex(item => item.name === 'Settings');
