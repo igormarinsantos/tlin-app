@@ -4,6 +4,8 @@
   :root {
     --tlin-lilac: 181 151 255;
     --tlin-cyan: 56 227 255;
+    --tlin-gradient: linear-gradient(135deg, #B597FF 0%, #38E3FF 100%);
+    --tlin-radius-pill: 9999px;
     // slate
     --slate-1: 252 252 253;
     --slate-2: 249 249 251;
@@ -158,6 +160,7 @@
   .dark {
     --tlin-lilac: 181 151 255;
     --tlin-cyan: 56 227 255;
+    --tlin-gradient: linear-gradient(135deg, #B597FF 0%, #38E3FF 100%);
     // slate
     --slate-1: 17 17 19;
     --slate-2: 24 25 27;

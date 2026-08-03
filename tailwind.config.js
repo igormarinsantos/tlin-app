@@ -45,7 +45,7 @@ const tailwindConfig = {
         interDisplay: defaultSansFonts,
       },
       backgroundImage: {
-        'tlin-gradient': 'linear-gradient(135deg, #B597FF 0%, #38E3FF 100%)',
+        'tlin-gradient': 'var(--tlin-gradient)',
         'tlin-shiny-gradient':
           'linear-gradient(90deg, #38E3FF, #B597FF, #38E3FF)',
       },
@@ -55,6 +55,10 @@ const tailwindConfig = {
         460: '460',
         520: '520',
         620: '620',
+      },
+      borderRadius: {
+        pill: 'var(--tlin-radius-pill)',
+        full: 'var(--tlin-radius-pill)',
       },
       typography: {
         bubble: {

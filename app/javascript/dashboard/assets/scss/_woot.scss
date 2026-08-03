@@ -5,6 +5,7 @@
 
 @import 'shared/assets/fonts/InterDisplay/inter-display';
 @import 'shared/assets/fonts/inter';
+@import 'shared/assets/fonts/dm-sans';
 
 // Next Colors
 @import 'next-colors';
@@ -56,6 +57,13 @@ body {
 }
 
 @layer utilities {
+  .bg-tlin-gradient,
+  .bg-n-brand,
+  .bg-n-iris-9,
+  .bg-woot-500 {
+    background-image: var(--tlin-gradient);
+  }
+
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;

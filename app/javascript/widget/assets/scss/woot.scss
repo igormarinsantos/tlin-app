@@ -3,10 +3,12 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import 'shared/assets/fonts/widget_fonts';
+@import 'shared/assets/fonts/dm-sans';
 @import 'views/conversation';
 
 html,
 body {
+  font-family: 'DM Sans', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Tahoma, Arial, sans-serif;
   @apply antialiased h-full;
 }
 
