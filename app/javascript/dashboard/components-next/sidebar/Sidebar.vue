@@ -372,7 +372,7 @@ const menuItems = computed(() => {
           activeOn: ['conversations_through_folders'],
           ...buildSortConfig(SIDEBAR_SORT_SECTIONS.FOLDERS),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: sortedFolders.value.map(view => ({
             name: `${view.name}-${view.id}`,
             label: view.name,
@@ -386,7 +386,7 @@ const menuItems = computed(() => {
           activeOn: ['conversations_through_team'],
           ...buildSortConfig(SIDEBAR_SORT_SECTIONS.TEAMS),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: sortedTeams.value.map(team => ({
             name: `${team.name}-${team.id}`,
             label: team.name,
@@ -401,7 +401,7 @@ const menuItems = computed(() => {
           activeOn: ['conversation_through_inbox'],
           ...buildSortConfig(SIDEBAR_SORT_SECTIONS.CHANNELS),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: sortedInboxes.value.map(inbox => ({
             name: `${inbox.name}-${inbox.id}`,
             label: inbox.name,
@@ -424,7 +424,7 @@ const menuItems = computed(() => {
           activeOn: ['conversations_through_label'],
           ...buildSortConfig(SIDEBAR_SORT_SECTIONS.LABELS),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: sortedLabels.value.map(label => ({
             name: `${label.title}-${label.id}`,
             label: label.title,
@@ -554,7 +554,7 @@ const menuItems = computed(() => {
           icon: 'i-lucide-group',
           label: t('SIDEBAR.CUSTOM_VIEWS_SEGMENTS'),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: contactCustomViews.value.map(view => ({
             name: `${view.name}-${view.id}`,
             label: view.name,
@@ -574,7 +574,7 @@ const menuItems = computed(() => {
           icon: 'i-lucide-tag',
           label: t('SIDEBAR.TAGGED_WITH'),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: labels.value.map(label => ({
             name: `${label.title}-${label.id}`,
             label: label.title,
