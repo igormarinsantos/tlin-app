@@ -32,7 +32,7 @@ const count = computed(() =>
     :to="to"
     :title="label"
     :class="{
-      'text-n-black bg-tlin-gradient rounded-full font-medium':
+      'text-n-black bg-tlin-gradient rounded-full font-bold':
         isActive && !hasActiveChild,
       'text-n-slate-12 font-medium': hasActiveChild,
       'text-n-slate-11 hover:bg-n-alpha-2': !isActive && !hasActiveChild,

@@ -37,7 +37,7 @@ const shouldRenderComponent = computed(() => {
       :title="label"
       class="flex h-8 items-center gap-2 px-2 py-1 rounded-full ltr:hover:bg-gradient-to-r rtl:hover:bg-gradient-to-l from-transparent via-n-slate-3/70 to-n-slate-3/70 group min-w-0"
       :class="{
-        'text-n-black bg-tlin-gradient active': active,
+        'text-n-black bg-tlin-gradient font-bold active': active,
       }"
     >
       <component
