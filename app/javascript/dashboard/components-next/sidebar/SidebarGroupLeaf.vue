@@ -22,10 +22,6 @@ const shouldRenderComponent = computed(() => {
   return typeof props.component === 'function' || isVNode(props.component);
 });
 
-// Tree-line connector per leaf: vertical line (::before) + rounded elbow on the
-// last child (::after). Logical props (start / border-s / rounded-es)
-const TREE_CONNECTOR =
-  "child-item before:content-[''] before:absolute before:start-0 before:w-0.5 before:h-full before:bg-n-slate-4 first:before:rounded-t last:before:h-1/5 last:after:content-[''] last:after:absolute last:after:start-0 last:after:bottom-[calc(50%_-_2px)] last:after:h-3 last:after:w-2.5 last:after:border-b-2 last:after:border-s-2 last:after:rounded-es last:after:border-n-slate-4";
 </script>
 
 <template>
@@ -34,11 +30,6 @@ const TREE_CONNECTOR =
     :feature-flag="resolveFeatureFlag(to)"
     as="li"
     class="py-0.5 mx-0 relative text-n-slate-11 min-w-0"
-    :class="{
-      [TREE_CONNECTOR]: !hideTreeLine,
-      'before:!w-px last:after:!border-b last:after:!border-s':
-        !hideTreeLine && thinTreeLine,
-    }"
   >
     <component
       :is="to ? 'router-link' : 'div'"
