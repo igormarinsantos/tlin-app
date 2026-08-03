@@ -33,7 +33,7 @@ const TREE_CONNECTOR =
     :permissions="resolvePermissions(to)"
     :feature-flag="resolveFeatureFlag(to)"
     as="li"
-    class="py-0.5 mx-2 relative text-n-slate-11 min-w-0"
+    class="py-0.5 mx-0 relative text-n-slate-11 min-w-0"
     :class="{
       [TREE_CONNECTOR]: !hideTreeLine,
       'before:!w-px last:after:!border-b last:after:!border-s':
