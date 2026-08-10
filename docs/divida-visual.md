@@ -3,6 +3,7 @@
 Esta etapa aplicou somente assets, Tailwind e variáveis CSS. Os itens abaixo exigiriam editar componentes ou views do core, ou não possuem configuração/feature flag; por isso foram deliberadamente deixados fora.
 
 - Concluído nesta etapa: `app/javascript/v3/components/Auth/SplitLayout.vue`, `views/login/Index.vue`, `views/auth/signup/Index.vue`, `views/auth/reset/password/Index.vue` e `views/auth/password/Edit.vue` adotam o layout de autenticação em duas colunas. A lógica de login, SSO, cadastro e redefinição de senha foi preservada; a reconciliação futura com upstream fica limitada a esses arquivos de apresentação.
+- Concluído nesta etapa: `app/javascript/v3/App.vue` e `shared/assets/fonts/dm-sans.scss` carregam DM Sans localmente para todo o app V3, incluindo autenticação. Os arquivos licenciados da fonte ficam em `public/fonts/`.
 - Concluído nesta etapa: `public/brand-assets/login-hero.jpg` é o placeholder visual da coluna direita. Para trocar a arte, basta substituir esse arquivo, mantendo o nome e formato.
 - `app/javascript/v3/views/login/Index.vue`: a rotação de imagens por segmento do legado continua fora de escopo; o novo hero único e substituível fica em `public/brand-assets/login-hero.jpg`.
 - Concluído nesta etapa: `app/javascript/dashboard/components-next/message/bubbles/Base.vue` aplica `bg-tlin-gradient`, texto branco e cantos `rounded-2xl` às mensagens enviadas por agentes, incluindo mensagens agendadas.
