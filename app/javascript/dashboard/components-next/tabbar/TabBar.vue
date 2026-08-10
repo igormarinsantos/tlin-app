@@ -70,10 +70,10 @@ const showDivider = index => {
 
 <template>
   <div
-    class="relative flex items-center h-8 rounded-lg bg-n-alpha-1 dark:bg-n-solid-1 w-fit transition-all duration-200 ease-out has-[button:active]:scale-[1.01]"
+    class="relative flex items-center h-8 rounded-full bg-n-alpha-1 dark:bg-n-solid-1 w-fit transition-all duration-200 ease-out has-[button:active]:scale-[1.01]"
   >
     <div
-      class="absolute rounded-lg bg-n-solid-active shadow-sm pointer-events-none h-8 outline-1 outline outline-n-container inset-y-0"
+      class="absolute rounded-full bg-tlin-gradient shadow-sm pointer-events-none h-8 inset-y-0"
       :class="{ 'transition-all duration-300 ease-out': enableTransition }"
       :style="indicatorStyle"
     />
@@ -82,10 +82,10 @@ const showDivider = index => {
       <button
         :ref="el => (tabRefs[index] = el)"
         type="button"
-        class="relative z-10 px-4 truncate py-1.5 text-sm border-0 outline-1 outline-transparent rounded-lg transition-all duration-200 ease-out hover:text-n-brand active:scale-[1.02]"
+        class="relative z-10 px-4 truncate py-1.5 text-sm border-0 outline-1 outline-transparent rounded-full transition-all duration-200 ease-out hover:text-n-slate-12 active:scale-[1.02]"
         :class="[
           activeTab === index
-            ? 'text-n-blue-11 scale-100'
+            ? 'text-n-slate-12 scale-100'
             : 'text-n-slate-10 scale-[0.98]',
         ]"
         @click="selectTab(index)"

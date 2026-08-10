@@ -32,7 +32,7 @@ const updateValue = () => {
     :id="props.id"
     type="button"
     class="group relative h-4 rounded-full w-7 flex-shrink-0 select-none focus:outline-none focus:ring-1 focus:ring-n-brand focus:ring-offset-n-slate-2 focus:ring-offset-2 transition-colors duration-200 ease-in-out"
-    :class="modelValue ? 'bg-n-brand' : 'bg-n-slate-6'"
+    :class="modelValue ? 'bg-tlin-gradient' : 'bg-n-slate-6'"
     :disabled="props.disabled"
     role="switch"
     :aria-checked="modelValue"
