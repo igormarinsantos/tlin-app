@@ -264,9 +264,6 @@ export default {
       v-if="showMessageView"
       :inbox-id="inboxId"
       :is-on-expanded-layout="isOnExpandedLayout"
-      :class="{
-        'max-[900px]:hidden': !currentChat.id && !isOnExpandedLayout,
-      }"
     >
       <SidepanelSwitch v-if="currentChat.id" />
     </ConversationBox>
