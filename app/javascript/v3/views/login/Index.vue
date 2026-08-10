@@ -20,6 +20,7 @@ import Icon from 'dashboard/components-next/icon/Icon.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import MfaVerification from 'dashboard/components/auth/MfaVerification.vue';
 import SessionLimitOverlay from 'dashboard/components/auth/SessionLimitOverlay.vue';
+import AuthSplitLayout from '../../components/Auth/SplitLayout.vue';
 
 const ERROR_MESSAGES = {
   'no-account-found': 'LOGIN.OAUTH.NO_ACCOUNT_FOUND',
@@ -41,6 +42,7 @@ export default {
     MfaVerification,
     SessionLimitOverlay,
     Icon,
+    AuthSplitLayout,
   },
   props: {
     ssoAuthToken: { type: String, default: '' },
@@ -289,34 +291,13 @@ export default {
 </script>
 
 <template>
-  <main
-    class="flex flex-col w-full min-h-screen py-20 bg-n-brand/5 dark:bg-n-background sm:px-6 lg:px-8"
+  <AuthSplitLayout
+    :logo="globalConfig.logo"
+    :logo-dark="globalConfig.logoDark"
+    :installation-name="globalConfig.installationName"
   >
-    <section class="max-w-5xl mx-auto">
-      <img
-        :src="globalConfig.logo"
-        :alt="globalConfig.installationName"
-        class="block w-auto h-8 mx-auto dark:hidden"
-      />
-      <img
-        v-if="globalConfig.logoDark"
-        :src="globalConfig.logoDark"
-        :alt="globalConfig.installationName"
-        class="hidden w-auto h-8 mx-auto dark:block"
-      />
-      <h2 class="mt-6 text-3xl font-medium text-center text-n-slate-12">
-        {{ replaceInstallationName($t('LOGIN.TITLE')) }}
-      </h2>
-      <p v-if="showSignupLink" class="mt-3 text-sm text-center text-n-slate-11">
-        {{ $t('COMMON.OR') }}
-        <router-link to="auth/signup" class="lowercase text-link text-n-brand">
-          {{ $t('LOGIN.CREATE_NEW_ACCOUNT') }}
-        </router-link>
-      </p>
-    </section>
-
     <!-- Session Limit Section -->
-    <section v-if="sessionsLimitReached" class="mt-11">
+    <section v-if="sessionsLimitReached">
       <SessionLimitOverlay
         :sessions="limitedSessions"
         @revoke="handleSessionRevoke"
@@ -326,7 +307,7 @@ export default {
     </section>
 
     <!-- MFA Verification Section -->
-    <section v-else-if="mfaRequired" class="mt-11">
+    <section v-else-if="mfaRequired">
       <MfaVerification
         :mfa-token="mfaToken"
         @verified="handleMfaVerified"
@@ -337,14 +318,23 @@ export default {
     <!-- Regular Login Section -->
     <section
       v-else
-      class="bg-white shadow sm:mx-auto mt-11 sm:w-full sm:max-w-lg dark:bg-n-solid-2 p-11 sm:shadow-lg sm:rounded-lg"
+      class="w-full rounded-[1.5rem] border border-n-weak bg-white p-6 shadow-xl shadow-n-slate-12/5 dark:bg-n-solid-2 sm:p-8"
       :class="{
         'mb-8 mt-15': !showGoogleOAuth,
         'animate-wiggle': loginApi.hasErrored,
       }"
     >
+      <h2 class="text-2xl font-semibold tracking-tight text-n-slate-12">
+        {{ replaceInstallationName($t('LOGIN.TITLE')) }}
+      </h2>
+      <p v-if="showSignupLink" class="mt-2 text-sm text-n-slate-11">
+        {{ $t('COMMON.OR') }}
+        <router-link to="auth/signup" class="font-medium text-n-blue-11">
+          {{ $t('LOGIN.CREATE_NEW_ACCOUNT') }}
+        </router-link>
+      </p>
       <div v-if="!email">
-        <div class="flex flex-col gap-4">
+        <div class="mt-6 flex flex-col gap-4">
           <GoogleOAuthButton v-if="showGoogleOAuth" />
           <div v-if="showSamlLogin" class="text-center">
             <router-link
@@ -420,7 +410,7 @@ export default {
     <!-- eslint-disable vue/no-bare-strings-in-template @intlify/vue-i18n/no-raw-text -->
     <p
       v-if="globalConfig.displayManifest"
-      class="mt-8 text-center text-xs text-n-slate-10"
+      class="mt-6 text-center text-xs text-n-slate-10"
     >
       powered by
       <a
@@ -433,5 +423,5 @@ export default {
       </a>
     </p>
     <!-- eslint-enable vue/no-bare-strings-in-template @intlify/vue-i18n/no-raw-text -->
-  </main>
+  </AuthSplitLayout>
 </template>
