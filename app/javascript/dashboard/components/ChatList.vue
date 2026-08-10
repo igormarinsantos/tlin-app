@@ -1013,7 +1013,7 @@ watch(conversationFilters, (newVal, oldVal) => {
 
     <p
       v-if="!chatListLoading && !conversationList.length"
-      class="flex overflow-auto justify-center items-center p-4"
+      class="flex flex-1 min-h-0 overflow-auto justify-center items-center p-4 text-center"
     >
       {{ $t('CHAT_LIST.LIST.404') }}
     </p>
@@ -1028,6 +1028,7 @@ watch(conversationFilters, (newVal, oldVal) => {
       @select-all-conversations="toggleSelectAll"
     />
     <ConversationList
+      v-if="chatListLoading || conversationList.length"
       :conversation-list="conversationList"
       :is-loading="chatListLoading"
       :show-end-of-list-message="showEndOfListMessage"
