@@ -77,3 +77,11 @@ As ocorrências de localização en/pt-BR restantes se dividem em: textos de pro
 contexto de build do Coolify não inclui `.git`, grava `unknown` em vez de falhar.
 Esta é uma divergência mínima e intencional do upstream; revalidar esse trecho em
 todo merge futuro do upstream.
+
+## Cadastro self-service e isolamento de contas
+
+O cadastro público está habilitado somente no ambiente local com `ENABLE_ACCOUNT_SIGNUP=true` em `.env.development`. A configuração efetiva também está gravada como `InstallationConfig[ENABLE_ACCOUNT_SIGNUP]=true`: `GlobalConfigService.load` consulta primeiro essa configuração persistida e usa a variável de ambiente para inicializá-la quando não houver valor. `GlobalConfigService.account_signup_enabled?` libera o endpoint quando o valor não é `false`.
+
+A tela `/app/auth/signup` envia `POST /api/v1/accounts.json`. `Api::V1::AccountsController#create` usa `AccountBuilder`, que cria uma `Account` nova e associa o novo `User` por `AccountUser` com papel `administrator`. O cadastro web anônimo retorna apenas o e-mail e exige confirmação antes de autenticar; não cria uma sessão automaticamente.
+
+O isolamento é nativo por `account_id` e pela associação `current_user.accounts`. O controlador busca a conta com `current_user.accounts.find(params[:id])`, portanto uma conta fora da associação resulta em 404. Teste local: uma usuária criada pelo endpoint recebeu somente a nova conta e papel `administrator`; autenticada, obteve 200 na própria conta e 404 ao requisitar uma conta preexistente de outro tenant.
