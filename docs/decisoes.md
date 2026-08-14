@@ -85,3 +85,27 @@ O cadastro público está habilitado somente no ambiente local com `ENABLE_ACCOU
 A tela `/app/auth/signup` envia `POST /api/v1/accounts.json`. `Api::V1::AccountsController#create` usa `AccountBuilder`, que cria uma `Account` nova e associa o novo `User` por `AccountUser` com papel `administrator`. O cadastro web anônimo retorna apenas o e-mail e exige confirmação antes de autenticar; não cria uma sessão automaticamente.
 
 O isolamento é nativo por `account_id` e pela associação `current_user.accounts`. O controlador busca a conta com `current_user.accounts.find(params[:id])`, portanto uma conta fora da associação resulta em 404. Teste local: uma usuária criada pelo endpoint recebeu somente a nova conta e papel `administrator`; autenticada, obteve 200 na própria conta e 404 ao requisitar uma conta preexistente de outro tenant.
+## Google OAuth
+
+O login e cadastro com Google já são nativos do Chatwoot. A estratégia `google_oauth2` é carregada em `config/initializers/omniauth.rb`; as callbacks ficam em `app/controllers/devise_overrides/omniauth_callbacks_controller.rb`; e o mesmo `GoogleOauth/Button.vue` é usado pelas telas V3 de login e cadastro. Não foi criada uma integração Tlin paralela.
+
+Configure estes valores somente no ambiente, nunca no Git:
+
+| Variável | Desenvolvimento local | Produção |
+| --- | --- | --- |
+| `FRONTEND_URL` | `http://127.0.0.1:3001` | URL pública final do app, por exemplo `https://app.tlin.ai` |
+| `GOOGLE_OAUTH_CLIENT_ID` | Client ID do cliente OAuth Web | Client ID do cliente OAuth Web de produção |
+| `GOOGLE_OAUTH_CLIENT_SECRET` | Client secret correspondente | Client secret correspondente |
+| `GOOGLE_OAUTH_CALLBACK_URL` | `http://127.0.0.1:3001/auth/google_oauth2/callback` | `${FRONTEND_URL}/auth/google_oauth2/callback` |
+| `ENABLE_GOOGLE_OAUTH_LOGIN` | `true` | `true` |
+
+`FRONTEND_URL` é a origem usada pelo middleware OmniAuth. O botão lê `GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CALLBACK_URL` em `app/views/layouts/vueapp.html.erb`; ambos precisam estar preenchidos para aparecer. `GOOGLE_OAUTH_REDIRECT_URI`, embora exista na configuração de instalação upstream, não é lida por este fluxo; a variável efetiva do botão é `GOOGLE_OAUTH_CALLBACK_URL`.
+
+### Google Cloud Console
+
+1. Criar (ou selecionar) um projeto Google Cloud exclusivo para Tlin e configurar a tela de consentimento como **External**. Preencher nome Tlin, e-mail de suporte, contatos de desenvolvedor e as URLs públicas de página inicial, termos e privacidade em `tlin.ai`.
+2. Em **Google Auth Platform → Audience**, adicionar os e-mails de teste enquanto o app estiver em modo Testing. Em **Data Access**, manter somente os escopos básicos de identidade; o fluxo atual solicita `email` e `profile`.
+3. Em **Google Auth Platform → Clients**, criar um cliente OAuth do tipo **Web application**. Em *Authorized redirect URIs*, cadastrar a URL exatamente como abaixo, sem barra final: `http://127.0.0.1:3001/auth/google_oauth2/callback` para este ambiente local e, quando existir, `https://app.tlin.ai/auth/google_oauth2/callback` (substituir pelo host real de `FRONTEND_URL`) para produção. Este fluxo não usa *Authorized JavaScript origins*.
+4. Copiar o Client ID e Client Secret para `.env.development`, reiniciar o ambiente (`./dev.sh down && ./dev.sh up`) e abrir `/app/login` ou `/app/auth/signup`. Em instalação que já tenha gravado `ENABLE_GOOGLE_OAUTH_LOGIN=false` em `InstallationConfig`, alterar esse valor para `true`, pois a configuração persistida tem precedência sobre o ambiente.
+
+No primeiro acesso de um e-mail Google novo, `OmniauthCallbacksController#sign_up_user` chama `AccountBuilder`, criando Account isolada, usuário e vínculo de administrador; em seguida direciona o usuário para definir uma senha local. Para um e-mail já existente, autentica a conta existente via token SSO interno.
