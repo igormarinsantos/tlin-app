@@ -15,6 +15,7 @@ import AppContainer from './Dashboard.vue';
 import Suspended from './suspended/Index.vue';
 import NoAccounts from './noAccounts/Index.vue';
 import OnboardingAccountDetails from './onboarding/Index.vue';
+import { routes as tlinAiAgentRoutes } from './tlinAiAgent/routes';
 
 const captainEnabled =
   window.globalConfig?.CAPTAIN_ENABLED === true ||
@@ -38,6 +39,7 @@ export default {
         ...campaignsRoutes.routes,
         ...dashboardAppsRoutes.routes,
         ...internalChatRoutes.routes,
+        ...tlinAiAgentRoutes,
       ],
     },
     {
