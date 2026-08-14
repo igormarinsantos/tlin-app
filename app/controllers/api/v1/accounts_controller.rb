@@ -8,6 +8,7 @@ class Api::V1::AccountsController < Api::BaseController
   before_action :ensure_account_name, only: [:create]
   before_action :validate_captcha, only: [:create]
   before_action :fetch_account, except: [:create]
+  before_action :ensure_trial_active, except: %i[create show]
   before_action :check_authorization, except: [:create]
 
   rescue_from CustomExceptions::Account::InvalidEmail,
@@ -123,6 +124,12 @@ class Api::V1::AccountsController < Api::BaseController
 
   def check_signup_enabled
     raise ActionController::RoutingError, 'Not Found' unless GlobalConfigService.account_signup_enabled?
+  end
+
+  def ensure_trial_active
+    return if @account.trial_active?
+
+    render json: { error: 'Trial expired. Activate a plan to continue.' }, status: :payment_required
   end
 
   def api_only_signup?

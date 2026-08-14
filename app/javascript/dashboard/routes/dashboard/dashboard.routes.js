@@ -17,6 +17,7 @@ import NoAccounts from './noAccounts/Index.vue';
 import OnboardingAccountDetails from './onboarding/Index.vue';
 import { routes as tlinAiAgentRoutes } from './tlinAiAgent/routes';
 import TlinLeadOnboarding from './tlinOnboarding/Index.vue';
+import TrialEnded from './trialEnded/Index.vue';
 
 const captainEnabled =
   window.globalConfig?.CAPTAIN_ENABLED === true ||
@@ -66,6 +67,11 @@ export default {
         permissions: ['administrator', 'agent', 'custom_role'],
       },
       component: Suspended,
+    },
+    {
+      path: frontendURL('accounts/:accountId/trial-ended'),
+      name: 'account_trial_ended',
+      component: TrialEnded,
     },
     {
       path: frontendURL('no-accounts'),

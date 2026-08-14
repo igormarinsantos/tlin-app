@@ -37,12 +37,25 @@ export const validateAuthenticateRoutePermission = async (to, next) => {
     ONBOARDING_STEPS.includes(userAccount?.onboarding_step) &&
     isAdmin &&
     isActive;
+  const trialExpired =
+    userAccount?.trial_ends_at &&
+    !userAccount?.plan_active &&
+    new Date(userAccount.trial_ends_at) <= new Date();
 
   const isOnTlinOnboarding = to.name === 'tlin_onboarding';
 
   if (to.name === 'no_accounts' || !to.name) {
-    const target = needsOnboarding ? 'tlin-onboarding' : 'dashboard';
+    let target = 'dashboard';
+    if (trialExpired) target = 'trial-ended';
+    if (!trialExpired && needsOnboarding) target = 'tlin-onboarding';
     return next(frontendURL(`accounts/${routeAccountId}/${target}`));
+  }
+
+  if (trialExpired && to.name !== 'account_trial_ended') {
+    return next(frontendURL(`accounts/${routeAccountId}/trial-ended`));
+  }
+  if (!trialExpired && to.name === 'account_trial_ended') {
+    return next(frontendURL(`accounts/${routeAccountId}/dashboard`));
   }
 
   if (needsOnboarding && !isOnTlinOnboarding) {

@@ -23,6 +23,8 @@ json.accounts do
     json.name account_user.account.name
     json.status account_user.account.status
     json.onboarding_step account_user.account.onboarding_step
+    json.trial_ends_at account_user.account.trial_ends_at&.iso8601
+    json.plan_active account_user.account.plan_active?
     json.active_at account_user.active_at
     json.role account_user.role
     json.permissions account_user.permissions

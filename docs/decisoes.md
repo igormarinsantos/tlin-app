@@ -109,3 +109,19 @@ Configure estes valores somente no ambiente, nunca no Git:
 4. Copiar o Client ID e Client Secret para `.env.development`, reiniciar o ambiente (`./dev.sh down && ./dev.sh up`) e abrir `/app/login` ou `/app/auth/signup`. Em instalação que já tenha gravado `ENABLE_GOOGLE_OAUTH_LOGIN=false` em `InstallationConfig`, alterar esse valor para `true`, pois a configuração persistida tem precedência sobre o ambiente.
 
 No primeiro acesso de um e-mail Google novo, `OmniauthCallbacksController#sign_up_user` chama `AccountBuilder`, criando Account isolada, usuário e vínculo de administrador; em seguida direciona o usuário para definir uma senha local. Para um e-mail já existente, autentica a conta existente via token SSO interno.
+## Trial por Account
+
+O trial Tlin usa `Account#custom_attributes`, sem migration e sem dependência de Enterprise. `AccountBuilder` grava `trial_started_at`, `trial_ends_at` (sete dias) e `plan_active=false` para toda Account nova criada pelos fluxos nativos de cadastro, inclusive OAuth. O concern `AccountTrial` é a fonte única de cálculo; Accounts antigas sem `trial_ends_at` continuam ativas para não interromper ambientes legados.
+
+Após o vencimento, o router exibe a tela `trial-ended` e as APIs autenticadas e escopadas pela Account retornam `402 Payment Required`; endpoints públicos e webhooks não são afetados. O botão de assinatura é deliberadamente um `mailto:` até a integração de checkout existir.
+
+Operação manual pelo Rails console:
+
+```ruby
+account = Account.find(ACCOUNT_ID)
+account.custom_attributes.merge!('plan_active' => true) # libera como pago
+account.save!
+
+account.custom_attributes['trial_ends_at'] = 7.days.from_now.iso8601 # estende teste
+account.save!
+```
