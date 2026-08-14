@@ -21,7 +21,6 @@ const {
   orientation,
   inReplyTo,
   shouldGroupWithNext,
-  additionalAttributes,
   contentAttributes,
 } = useMessageContext();
 const { t } = useI18n();
@@ -36,7 +35,7 @@ const deletedByContact = computed(
 );
 
 const varaintBaseMap = {
-  [MESSAGE_VARIANTS.AGENT]: 'bg-n-solid-blue text-n-slate-12',
+  [MESSAGE_VARIANTS.AGENT]: 'bg-tlin-gradient text-white',
   [MESSAGE_VARIANTS.PRIVATE]:
     'bg-n-solid-amber text-n-amber-12 [&_.prosemirror-mention-node]:font-semibold',
   [MESSAGE_VARIANTS.USER]: 'bg-n-slate-4 text-n-slate-12',
@@ -51,9 +50,9 @@ const varaintBaseMap = {
 
 const orientationMap = {
   [ORIENTATION.LEFT]:
-    'left-bubble rounded-xl ltr:rounded-bl-sm rtl:rounded-br-sm',
+    'left-bubble rounded-2xl ltr:rounded-bl-sm rtl:rounded-br-sm',
   [ORIENTATION.RIGHT]:
-    'right-bubble rounded-xl ltr:rounded-br-sm rtl:rounded-bl-sm',
+    'right-bubble rounded-2xl ltr:rounded-br-sm rtl:rounded-bl-sm',
   [ORIENTATION.CENTER]: 'rounded-md',
 };
 
@@ -67,16 +66,6 @@ const flexOrientationClass = computed(() => {
   return map[orientation.value];
 });
 
-const isScheduledMessage = computed(
-  () => !!additionalAttributes.value?.scheduledMessageId
-);
-
-const scheduledMessageClass = computed(() => {
-  if (!isScheduledMessage.value) return '';
-  if (variant.value === MESSAGE_VARIANTS.AGENT) return 'bg-n-solid-iris';
-  return '';
-});
-
 const messageClass = computed(() => {
   const classToApply = [varaintBaseMap[variant.value]];
 
@@ -84,10 +73,6 @@ const messageClass = computed(() => {
     classToApply.push(orientationMap[orientation.value]);
   } else {
     classToApply.push('rounded-lg');
-  }
-
-  if (scheduledMessageClass.value) {
-    classToApply.push(scheduledMessageClass.value);
   }
 
   if (deletedByContact.value) {
@@ -154,9 +139,11 @@ const replyToPreview = computed(() => {
       :class="[
         flexOrientationClass,
         variant === MESSAGE_VARIANTS.EMAIL ? 'px-3 pb-3' : '',
-        variant === MESSAGE_VARIANTS.PRIVATE
-          ? 'text-n-amber-12/50'
-          : 'text-n-slate-11',
+        variant === MESSAGE_VARIANTS.AGENT
+          ? 'text-white/75'
+          : variant === MESSAGE_VARIANTS.PRIVATE
+            ? 'text-n-amber-12/50'
+            : 'text-n-slate-11',
       ]"
       class="mt-2"
     />
