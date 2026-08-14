@@ -458,6 +458,13 @@ const menuItems = computed(() => {
       },
     },
     {
+      name: 'TlinAiAgent',
+      label: t('SIDEBAR.TLIN_AI_AGENT'),
+      icon: 'i-lucide-lock-keyhole',
+      to: accountScopedRoute('tlin_ai_agent'),
+      activeOn: ['tlin_ai_agent'],
+    },
+    {
       name: 'Captain',
       icon: 'i-woot-captain',
       label: t('SIDEBAR.CAPTAIN'),

@@ -347,6 +347,7 @@
     "COMPANIES": "Empresas",
     "ALL_COMPANIES": "Todas as empresas",
     "INTERNAL_CHAT": "Chat Interno",
+    "TLIN_AI_AGENT": "Agente IA",
     "KANBAN": "Kanban",
     "CAPTAIN": "Capitão",
     "CAPTAIN_ASSISTANTS": "Assistentes",
@@ -421,6 +422,13 @@
     "SECURITY": "Segurança",
     "CAPTAIN_AI": "Capitão",
     "CONVERSATION_WORKFLOW": "Fluxo de Conversa"
+  },
+  "TLIN_AI_AGENT": {
+    "TITLE": "Ative seu Agente de IA",
+    "DESCRIPTION": "Seu agente de IA atende, qualifica e agenda sozinho no WhatsApp 24/7.",
+    "DETAIL": "Conecte este recurso premium quando estiver pronto para automatizar sua operação comercial.",
+    "ACTIVATE": "Ativar agora",
+    "AVAILABILITY": "Disponível no plano Scale — fale com a gente."
   },
   "CAPTAIN_SETTINGS": {
     "TITLE": "Configurações do Capitão",
