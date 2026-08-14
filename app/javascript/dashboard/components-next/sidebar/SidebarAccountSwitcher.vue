@@ -27,6 +27,7 @@ const { t } = useI18n();
 const { accountId, currentAccount } = useAccount();
 const currentUser = useMapGetter('getCurrentUser');
 const globalConfig = useMapGetter('globalConfig/get');
+const productName = 'tlin.ai';
 
 const userAccounts = useMapGetter('getUserAccounts');
 
@@ -58,12 +59,12 @@ const emitNewAccount = () => {
         v-if="isCollapsed"
         class="grid flex-shrink-0 place-content-center p-2 rounded-lg cursor-pointer hover:bg-n-alpha-1"
         :class="{ 'bg-n-alpha-1': isOpen }"
-        :title="currentAccount.name"
+        :title="productName"
         @click="toggle"
       >
         <Logo class="size-7" />
       </button>
-      <!-- Expanded view: Account name trigger -->
+      <!-- Expanded view: Tlin brand trigger; account selection stays in the menu. -->
       <button
         v-else
         id="sidebar-account-switcher"
@@ -83,7 +84,7 @@ const emitNewAccount = () => {
           class="text-sm font-medium leading-5 text-n-slate-12 truncate"
           aria-live="polite"
         >
-          {{ currentAccount.name }}
+          {{ productName }}
         </span>
 
         <span
