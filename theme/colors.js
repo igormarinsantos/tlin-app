@@ -230,6 +230,7 @@ export const colors = {
     tlin: {
       lilac: '#B597FF',
       cyan: '#38E3FF',
+      gradient: 'var(--tlin-gradient)',
     },
     portal: 'var(--dynamic-portal-color)',
     'portal-soft': 'var(--dynamic-portal-color-soft)',
