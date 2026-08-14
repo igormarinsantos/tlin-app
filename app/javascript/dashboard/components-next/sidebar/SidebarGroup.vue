@@ -304,7 +304,7 @@ watch(
       <ul
         v-if="hasChildren"
         v-show="isExpanded || hasActiveChild"
-        class="grid m-0 list-none min-w-0"
+        class="grid m-0 list-none min-w-0 ps-2"
       >
         <template v-for="child in visibleChildren" :key="child.name">
           <SidebarSubGroup
