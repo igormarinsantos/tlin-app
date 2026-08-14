@@ -38,15 +38,17 @@ export const validateAuthenticateRoutePermission = async (to, next) => {
     isAdmin &&
     isActive;
 
+  const isOnTlinOnboarding = to.name === 'tlin_onboarding';
+
   if (to.name === 'no_accounts' || !to.name) {
-    const target = needsOnboarding ? 'onboarding' : 'dashboard';
+    const target = needsOnboarding ? 'tlin-onboarding' : 'dashboard';
     return next(frontendURL(`accounts/${routeAccountId}/${target}`));
   }
 
-  if (needsOnboarding && !isOnOnboardingView(to)) {
-    return next(frontendURL(`accounts/${routeAccountId}/onboarding`));
+  if (needsOnboarding && !isOnTlinOnboarding) {
+    return next(frontendURL(`accounts/${routeAccountId}/tlin-onboarding`));
   }
-  if (!needsOnboarding && isOnOnboardingView(to)) {
+  if (!needsOnboarding && (isOnTlinOnboarding || isOnOnboardingView(to))) {
     return next(frontendURL(`accounts/${routeAccountId}/dashboard`));
   }
 

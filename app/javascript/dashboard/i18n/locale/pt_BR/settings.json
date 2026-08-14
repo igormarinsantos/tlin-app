@@ -430,6 +430,45 @@
     "ACTIVATE": "Ativar agora",
     "AVAILABILITY": "Disponível no plano Scale — fale com a gente."
   },
+  "TLIN_ONBOARDING": {
+    "STEP": "Etapa {current} de {total}",
+    "CONTINUE": "Continuar",
+    "FINISH": "Concluir",
+    "SKIP": "Pular por agora",
+    "OTHER": "Outro",
+    "SELECT_PLACEHOLDER": "Selecione uma opção",
+    "NAME": {
+      "TITLE": "Como podemos te chamar?",
+      "DESCRIPTION": "Isso ajuda a personalizar sua experiência no Tlin.",
+      "PLACEHOLDER": "Seu nome",
+      "ERROR": "Conte como podemos te chamar."
+    },
+    "WHATSAPP": {
+      "TITLE": "Seu WhatsApp",
+      "DESCRIPTION": "Use o formato internacional, por exemplo +5511999999999.",
+      "PLACEHOLDER": "+5511999999999",
+      "ERROR": "Informe um WhatsApp válido no formato internacional."
+    },
+    "REFERRAL": {
+      "TITLE": "Como você conheceu o Tlin?",
+      "DESCRIPTION": "Opcional — isso nos ajuda a melhorar como chegamos a negócios como o seu.",
+      "REFERRAL": "Indicação",
+      "AD": "Anúncio"
+    },
+    "BUSINESS_TYPE": {
+      "TITLE": "Qual o tipo do seu negócio?",
+      "DESCRIPTION": "Opcional — usaremos isso para personalizar a futura configuração do seu agente de IA.",
+      "CLINIC": "Clínica",
+      "STORE": "Loja",
+      "SERVICES": "Serviços",
+      "AGENCY": "Agência"
+    },
+    "BUSINESS_OFFER": {
+      "TITLE": "O que você vende ou oferece?",
+      "DESCRIPTION": "Opcional — uma descrição curta já basta.",
+      "PLACEHOLDER": "Ex.: consultas, produtos ou serviços"
+    }
+  },
   "CAPTAIN_SETTINGS": {
     "TITLE": "Configurações do Capitão",
     "DESCRIPTION": "Configure seus modelos e recursos de IA para o Capitão. O Capitão utiliza um modelo de cobrança baseado em créditos; você será cobrado em créditos por cada ação que o Capitão realizar, dependendo do modelo selecionado.",

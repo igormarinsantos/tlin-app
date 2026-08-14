@@ -456,6 +456,45 @@
     "ACTIVATE": "Activate now",
     "AVAILABILITY": "Available on the Scale plan — talk to us."
   },
+  "TLIN_ONBOARDING": {
+    "STEP": "Step {current} of {total}",
+    "CONTINUE": "Continue",
+    "FINISH": "Finish",
+    "SKIP": "Skip for now",
+    "OTHER": "Other",
+    "SELECT_PLACEHOLDER": "Select an option",
+    "NAME": {
+      "TITLE": "What should we call you?",
+      "DESCRIPTION": "This helps us personalize your Tlin experience.",
+      "PLACEHOLDER": "Your name",
+      "ERROR": "Tell us how we should call you."
+    },
+    "WHATSAPP": {
+      "TITLE": "Your WhatsApp",
+      "DESCRIPTION": "Use the international format, for example +5511999999999.",
+      "PLACEHOLDER": "+5511999999999",
+      "ERROR": "Enter a valid WhatsApp number in international format."
+    },
+    "REFERRAL": {
+      "TITLE": "How did you hear about Tlin?",
+      "DESCRIPTION": "Optional — it helps us improve how we reach businesses like yours.",
+      "REFERRAL": "Referral",
+      "AD": "Ad"
+    },
+    "BUSINESS_TYPE": {
+      "TITLE": "What type of business do you have?",
+      "DESCRIPTION": "Optional — we will use this to tailor your future AI agent setup.",
+      "CLINIC": "Clinic",
+      "STORE": "Store",
+      "SERVICES": "Services",
+      "AGENCY": "Agency"
+    },
+    "BUSINESS_OFFER": {
+      "TITLE": "What do you sell or offer?",
+      "DESCRIPTION": "Optional — a short description is enough.",
+      "PLACEHOLDER": "For example: appointments, products or services"
+    }
+  },
   "CAPTAIN_SETTINGS": {
     "TITLE": "Captain Settings",
     "DESCRIPTION": "Configure your AI models and features for Captain. Captain follows a credit based billing, you will be charged credits for every action Captain takes based on the model selected.",
