@@ -1,5 +1,8 @@
 {
- "name": "App",
+ "name": "Tlin",
+ "short_name": "Tlin",
+ "theme_color": "#B597FF",
+ "background_color": "#B597FF",
  "icons": [
   {
    "src": "\/favicon-96x96.png",
