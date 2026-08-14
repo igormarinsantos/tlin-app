@@ -61,6 +61,19 @@ const isMobile = computed(() => windowWidth.value < 768);
 
 const accountId = useMapGetter('getCurrentAccountId');
 const currentUserId = useMapGetter('getCurrentUserID');
+const currentAccount = computed(() =>
+  store.getters['accounts/getAccount'](accountId.value)
+);
+const trialDaysRemaining = computed(() => {
+  const attributes = currentAccount.value?.custom_attributes || {};
+  const trialEndsAt = attributes.trial_ends_at;
+  if (!trialEndsAt || attributes.plan_active) return null;
+
+  return Math.max(
+    0,
+    Math.ceil((new Date(trialEndsAt) - new Date()) / 86400000)
+  );
+});
 const isFeatureEnabledonAccount = useMapGetter(
   'accounts/isFeatureEnabledonAccount'
 );
@@ -1032,6 +1045,30 @@ const menuItems = computed(() => {
           isEffectivelyCollapsed
         "
       />
+      <div
+        v-if="trialDaysRemaining !== null"
+        class="z-10 w-full px-3 pb-2"
+        :class="{ 'px-1': isEffectivelyCollapsed }"
+      >
+        <div
+          class="flex items-center gap-2 rounded-full bg-tlin-gradient px-3 py-2 text-xs font-semibold text-n-black"
+          :class="isEffectivelyCollapsed ? 'justify-center px-0' : ''"
+          :title="
+            t('APP_GLOBAL.TLIN_TRIAL.DAYS_REMAINING', {
+              count: trialDaysRemaining,
+            })
+          "
+        >
+          <span class="i-lucide-clock-3 size-4 shrink-0" />
+          <span v-if="!isEffectivelyCollapsed" class="truncate">
+            {{
+              t('APP_GLOBAL.TLIN_TRIAL.DAYS_REMAINING', {
+                count: trialDaysRemaining,
+              })
+            }}
+          </span>
+        </div>
+      </div>
       <div
         class="px-1 py-1.5 flex-shrink-0 flex w-full z-50 gap-2 items-center border-t border-n-weak shadow-[0px_-2px_4px_0px_rgba(27,28,29,0.02)]"
         :class="isEffectivelyCollapsed ? 'justify-center' : 'justify-between'"
