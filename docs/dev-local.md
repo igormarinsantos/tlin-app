@@ -1,67 +1,18 @@
-# Desenvolvimento local no WSL (Rails + Vite com hot-reload)
+# Desenvolvimento local no WSL
 
-## Docker Engine nativo no WSL
+O caminho confiável do Tlin no WSL é o launcher do repositório. Ele inicia Docker, Postgres, Redis, Rails, Vite/HMR e Sidekiq em segundo plano; os processos sobrevivem ao fechamento do terminal.
 
-Em uma nova sessao WSL, confirme que o daemon esta disponivel antes de subir os servicos:
-
-```bash
-docker info
-```
-
-Se ele nao estiver em execucao, inicie-o com:
-
-```bash
-sudo service docker start
-```
-
-Este fluxo executa somente PostgreSQL e Redis no Docker. Rails e Vite rodam diretamente no Ubuntu/WSL, tornando a alteração de Ruby, Vue e CSS imediata. A aplicação Tlin fica em `http://localhost:3001`; Vite/HMR permanece em `http://localhost:3036`.
-
-> Execute todos os comandos a seguir no terminal Ubuntu/WSL, na raiz do clone Linux do repositório. Evite desenvolver em `/mnt/c/...`: manter o repositório no filesystem Linux reduz problemas de performance de watch e permissões.
-
-## Pré-requisitos
-
-- Docker Engine nativo e `docker compose` disponíveis no Ubuntu/WSL.
-- Ruby `3.4.4` (veja `.ruby-version`) com as dependências de compilação do projeto.
-- Node `24.13.0` (veja `.nvmrc`) e Corepack.
-- PostgreSQL e Redis **não** precisam estar instalados no host: serão serviços Docker.
+Use sempre esta URL no navegador: [http://127.0.0.1:3001/app/login](http://127.0.0.1:3001/app/login). No Windows, `localhost` pode resolver primeiro para IPv6 (`::1`), enquanto o encaminhamento do WSL está em IPv4; isso aparenta uma página travada mesmo com a aplicação saudável.
 
 ## Preparar a cópia local
 
-O exemplo de ambiente desativa Bullet e os query traces detalhados apenas no desenvolvimento para manter a navegação local responsiva. Para investigar N+1 em uma sessão pontual, remova `DISABLE_BULLET=true` e defina `VERBOSE_QUERY_LOGS=true`.
-
-O arquivo `.env.development` é local e ignorado pelo Git. Ele já foi preparado com `FRONTEND_URL=http://localhost:3001`, banco/Redis em `localhost`, modo community e branding Tlin. Caso recrie o arquivo, gere uma chave nova e preserve os placeholders comentados do Baileys:
-
 ```bash
+cd ~/tlin-app
 cp .env.development.example .env.development
 bundle exec rails secret
 ```
 
-Use a saída do segundo comando em `SECRET_KEY_BASE` e mantenha, no mínimo, estes valores:
-
-```dotenv
-RAILS_ENV=development
-SECRET_KEY_BASE=<chave-gerada>
-FRONTEND_URL=http://localhost:3001
-PORT=3001
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_USERNAME=postgres
-POSTGRES_PASSWORD=
-POSTGRES_DATABASE=tlin_app_dev
-REDIS_URL=redis://localhost:6380
-REDIS_PORT=6380
-REDIS_PASSWORD=
-DISABLE_ENTERPRISE=true
-CAPTAIN_ENABLED=false
-INSTALLATION_NAME=Tlin
-
-# BAILEYS_PROVIDER_DEFAULT_CLIENT_NAME=
-# BAILEYS_PROVIDER_DEFAULT_URL=
-# BAILEYS_PROVIDER_DEFAULT_API_KEY=
-# BAILEYS_WHATSAPP_GROUPS_ENABLED=
-```
-
-Instale as dependências do host:
+Cole a chave gerada em `SECRET_KEY_BASE` de `.env.development`. Depois instale as dependências uma única vez:
 
 ```bash
 bundle install
@@ -69,118 +20,74 @@ corepack enable
 corepack pnpm install
 ```
 
-## Subir somente banco e Redis
-
-Não execute `docker compose up` sem serviços: ele também sobe Rails, Vite, Sidekiq e MailHog. Para este fluxo, suba exclusivamente as dependências:
+Com o Docker Engine nativo instalado, inicie o daemon caso a sessão WSL não o tenha iniciado:
 
 ```bash
-ENV_FILE=.env.development docker compose up -d postgres redis
-docker compose ps postgres redis
+sudo service docker start
 ```
 
-O Compose expõe PostgreSQL em `5432` e Redis em `6379`, acessíveis do WSL como `localhost`.
-
-## Preparar o banco
-
-Para um banco novo, `db:setup` cria o banco, carrega a estrutura e executa seeds:
+Prepare o banco:
 
 ```bash
-bundle exec rails db:setup
+./dev.sh up
+./dev.sh db:setup
 ```
 
-Quando o banco já existir, aplique atualizações e rode seeds quando forem necessários:
+## Dia a dia
+
+Em qualquer terminal WSL, dentro de `~/tlin-app`:
 
 ```bash
-bundle exec rails db:migrate
-bundle exec rails db:seed
+./dev.sh up
 ```
 
-## Dia a dia: dois terminais
+Abra [http://127.0.0.1:3001/app/login](http://127.0.0.1:3001/app/login). Vite fica em modo de desenvolvimento na porta `3036`, com HMR; Rails e Vite fazem bind em `0.0.0.0` para que o encaminhamento Windows ↔ WSL e o acesso pelo IP interno do WSL funcionem. A URL IPv4 continua sendo a mais confiável no navegador Windows.
 
-Terminal 1 — Rails, na porta reservada para o Tlin:
+Para verificar tudo sem tentativa e erro:
 
 ```bash
-bundle exec rails server -p 3001 -b 0.0.0.0
+./dev.sh status
 ```
 
-Terminal 2 — Vite com hot-reload:
+Os logs persistentes ficam em `tmp/dev-local/rails.log`, `tmp/dev-local/vite.log` e `tmp/dev-local/sidekiq.log`. Para parar apenas o ambiente deste clone:
 
 ```bash
-bin/vite dev
+./dev.sh down
 ```
 
-Abra `http://localhost:3001`. O browser recebe a página do Rails nessa porta e conecta o HMR ao Vite em `3036`; essa separação é esperada e não depende de deploy.
+## Escolher o modo de frontend
 
-### Executar em background
+`./dev.sh up` mantém o Vite em modo HMR: alterações de Vue, CSS e tokens aparecem sem recarregar a página, mas o navegador recebe muitos módulos ES separados. É o modo adequado enquanto estiver editando continuamente.
 
-Para manter os dois processos ativos após fechar o terminal WSL, execute na raiz do repositório:
+Para ajustes visuais em que o fluxo é **editar, gerar e apertar F5 várias vezes**, use o preview compilado:
 
 ```bash
-setsid -f bundle exec rails server -p 3001 -b 0.0.0.0 > tmp/tlin-rails.log 2>&1
-setsid -f pnpm vite dev > tmp/tlin-vite.log 2>&1
+./dev.sh build-preview
 ```
 
-Valide a aplicação com `curl -s http://localhost:3001/app/login | grep -iE '<title>|chatwoot|tlin'`. Os logs ficam em `tmp/tlin-rails.log` e `tmp/tlin-vite.log`.
+Ele encerra somente o Vite de desenvolvimento, gera `public/vite-dev` uma vez e mantém Rails + Sidekiq ativos. As recargas passam a usar assets prontos, sem recompilação de módulos sob demanda. O build fica em `tmp/dev-local/vite-build.log`.
+O launcher reserva `4 GB` para o Node durante esse build, pois o dashboard completo pode exceder o heap padrão de 2 GB ao gerar chunks.
 
-### Modo rápido no navegador (assets compilados)
-
-O dashboard possui muitos módulos. Para testar a navegação sem o custo de HMR e de compilação sob demanda do Vite, pare o Vite, gere os assets estáticos e mantenha apenas Rails e Sidekiq ativos:
+Para apenas subir um preview que já foi compilado, sem reconstruir:
 
 ```bash
-NODE_OPTIONS=--max-old-space-size=4096 bin/vite build --mode development
-bundle exec sidekiq -C config/sidekiq.yml
+./dev.sh preview
 ```
 
-Rails servirá os arquivos prontos de `public/vite-dev`. Para voltar ao hot-reload, execute novamente `bin/vite dev`; o Rails detecta o servidor Vite automaticamente.
-
-Para parar apenas as dependências Docker ao final do trabalho:
+Para voltar ao HMR após editar novamente, execute:
 
 ```bash
-docker compose stop postgres redis
+./dev.sh up
 ```
+
+O launcher somente encerra processos cuja pasta de trabalho é este checkout. Se outra aplicação estiver usando a porta 3001 ou 3036, ele para com uma mensagem que informa PID e diretório, em vez de encerrá-la.
 
 ## Troubleshooting
 
-### A porta 3001 está ocupada
-
-Identifique o processo no WSL e encerre-o, ou escolha outra porta e atualize `FRONTEND_URL` com a mesma porta:
-
-```bash
-ss -ltnp | grep :3001
-kill <PID>
-```
-
-### Vite/Rails não reflete mudanças
-
-Confirme que Rails está em `3001` e Vite em `3036`. Reinicie somente o processo afetado. Se estiver trabalhando em `/mnt/c`, mova o clone para o filesystem Linux (`~/src/tlin-app`) para que o watcher tenha desempenho confiável.
-
-### Build do frontend fica sem memória
-
-Use um heap maior apenas no comando que precisa dele:
-
-```bash
-NODE_OPTIONS=--max-old-space-size=4096 corepack pnpm exec vite build
-```
-
-### `TZ=UTC vitest` falha no shell
-
-No Bash/WSL o script funciona como está:
-
-```bash
-corepack pnpm test
-```
-
-No PowerShell, a atribuição POSIX não é reconhecida. Use:
-
-```powershell
-$env:TZ='UTC'; corepack pnpm exec vitest --no-watch --no-cache --no-coverage --logHeapUsage
-```
-
-### Rails não conecta ao banco ou Redis
-
-Verifique se apenas os dois serviços estão saudáveis e se `.env.development` usa `localhost`, não os nomes de serviço Docker:
-
-```bash
-docker compose ps postgres redis
-ENV_FILE=.env.development docker compose logs --tail=100 postgres redis
-```
+- **`localhost:3001` não abre ou fica lento:** use `http://127.0.0.1:3001/app/login`. É a URL suportada no Windows + WSL para este ambiente.
+- **Docker não responde:** execute `sudo service docker start` e depois `docker info`.
+- **Postgres ou Redis não ficam saudáveis:** confira `./dev.sh status`; as credenciais e portas usadas localmente estão em `.env.development` (`5432` e `6380`).
+- **Vite ficou pesado após atualização de dependências:** pare e suba de novo com `./dev.sh down && ./dev.sh up`; ele mantém um único servidor HMR, em vez de recompilar um processo por navegação.
+- **Logs de queries deixando o Rails lento:** o exemplo local já usa `DISABLE_BULLET=true` e `VERBOSE_QUERY_LOGS=false`. Remova essas duas opções somente durante uma investigação de N+1.
+- **Node fica sem memória:** inicie com `NODE_OPTIONS=--max-old-space-size=4096 ./dev.sh up`.
+- **Vitest reclama de fuso horário:** rode `TZ=UTC pnpm test`.

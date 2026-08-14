@@ -52,6 +52,10 @@ const isACustomBrandedInstance = useMapGetter(
 );
 const isRTL = useMapGetter('accounts/isRTL');
 
+const captainEnabled =
+  window.globalConfig?.CAPTAIN_ENABLED === true ||
+  window.globalConfig?.CAPTAIN_ENABLED === 'true';
+
 const { width: windowWidth } = useWindowSize();
 const isMobile = computed(() => windowWidth.value < 768);
 
@@ -368,7 +372,7 @@ const menuItems = computed(() => {
           activeOn: ['conversations_through_folders'],
           ...buildSortConfig(SIDEBAR_SORT_SECTIONS.FOLDERS),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: sortedFolders.value.map(view => ({
             name: `${view.name}-${view.id}`,
             label: view.name,
@@ -382,7 +386,7 @@ const menuItems = computed(() => {
           activeOn: ['conversations_through_team'],
           ...buildSortConfig(SIDEBAR_SORT_SECTIONS.TEAMS),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: sortedTeams.value.map(team => ({
             name: `${team.name}-${team.id}`,
             label: team.name,
@@ -397,7 +401,7 @@ const menuItems = computed(() => {
           activeOn: ['conversation_through_inbox'],
           ...buildSortConfig(SIDEBAR_SORT_SECTIONS.CHANNELS),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: sortedInboxes.value.map(inbox => ({
             name: `${inbox.name}-${inbox.id}`,
             label: inbox.name,
@@ -420,7 +424,7 @@ const menuItems = computed(() => {
           activeOn: ['conversations_through_label'],
           ...buildSortConfig(SIDEBAR_SORT_SECTIONS.LABELS),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: sortedLabels.value.map(label => ({
             name: `${label.title}-${label.id}`,
             label: label.title,
@@ -550,7 +554,7 @@ const menuItems = computed(() => {
           icon: 'i-lucide-group',
           label: t('SIDEBAR.CUSTOM_VIEWS_SEGMENTS'),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: contactCustomViews.value.map(view => ({
             name: `${view.name}-${view.id}`,
             label: view.name,
@@ -570,7 +574,7 @@ const menuItems = computed(() => {
           icon: 'i-lucide-tag',
           label: t('SIDEBAR.TAGGED_WITH'),
           collapsible: true,
-          showTreeLine: true,
+          showTreeLine: false,
           children: labels.value.map(label => ({
             name: `${label.title}-${label.id}`,
             label: label.title,
@@ -864,6 +868,13 @@ const menuItems = computed(() => {
     },
   ];
 
+  // Captain routes are not registered when the installation disables Captain.
+  // Remove its sidebar group as well so route resolution cannot crash the app.
+  if (!captainEnabled) {
+    const captainIndex = items.findIndex(item => item.name === 'Captain');
+    items.splice(captainIndex, 1);
+  }
+
   if (dashboardApps.value.length > 0) {
     const settingsIndex = items.findIndex(item => item.name === 'Settings');
     items.splice(settingsIndex, 0, {
@@ -941,7 +952,7 @@ const menuItems = computed(() => {
         <RouterLink
           v-if="!isEffectivelyCollapsed"
           :to="{ name: 'search' }"
-          class="flex gap-2 items-center px-2 py-1 w-full h-7 rounded-lg outline outline-1 outline-n-weak bg-n-button-color transition-all duration-100 ease-out"
+          class="flex gap-2 items-center px-2 py-1 w-full h-7 rounded-full outline outline-1 outline-n-weak bg-n-button-color transition-all duration-100 ease-out"
         >
           <span class="flex-shrink-0 i-lucide-search size-4 text-n-slate-10" />
           <span class="flex-grow text-start text-n-slate-10">
@@ -956,7 +967,7 @@ const menuItems = computed(() => {
         <RouterLink
           v-else
           :to="{ name: 'search' }"
-          class="flex items-center justify-center size-8 rounded-lg outline outline-1 outline-n-weak bg-n-button-color transition-all duration-100 ease-out hover:bg-n-alpha-2 dark:hover:bg-n-slate-9/30"
+          class="flex items-center justify-center size-8 rounded-full outline outline-1 outline-n-weak bg-n-button-color transition-all duration-100 ease-out hover:bg-n-alpha-2 dark:hover:bg-n-slate-9/30"
           :title="t('COMBOBOX.SEARCH_PLACEHOLDER')"
         >
           <span class="i-lucide-search size-4 text-n-slate-11" />
@@ -967,7 +978,7 @@ const menuItems = computed(() => {
               icon="i-lucide-pen-line"
               color="slate"
               size="sm"
-              class="dark:hover:!bg-n-slate-9/30"
+              class="!rounded-full dark:hover:!bg-n-slate-9/30"
               :class="[
                 isEffectivelyCollapsed
                   ? '!size-8 !outline-n-weak !text-n-slate-11'
@@ -981,7 +992,7 @@ const menuItems = computed(() => {
     </section>
     <nav
       class="grid overflow-y-scroll flex-grow gap-2 pb-5 no-scrollbar min-w-0"
-      :class="isEffectivelyCollapsed ? 'px-1' : 'px-2'"
+      :class="isEffectivelyCollapsed ? 'px-1' : 'px-3'"
     >
       <ul
         class="flex flex-col gap-1 m-0 list-none min-w-0"

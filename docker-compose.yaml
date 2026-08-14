@@ -98,8 +98,6 @@ services:
     image: redis:alpine
     restart: always
     command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
-    # The default remains .env. For host-based local development, run with
-    # ENV_FILE=.env.development to share the development Redis settings.
     env_file: ${ENV_FILE:-.env}
     volumes:
       - redis:/data/redis
