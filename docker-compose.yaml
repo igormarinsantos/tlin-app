@@ -90,19 +90,21 @@ services:
     volumes:
       - postgres:/data/postgres
     environment:
-      - POSTGRES_DB=chatwoot
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=${POSTGRES_DATABASE:-chatwoot}
+      - POSTGRES_USER=${POSTGRES_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}
 
   redis:
     image: redis:alpine
     restart: always
     command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
-    env_file: .env
+    # The default remains .env. For host-based local development, run with
+    # ENV_FILE=.env.development to share the development Redis settings.
+    env_file: ${ENV_FILE:-.env}
     volumes:
       - redis:/data/redis
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT:-6379}:6379'
 
   mailhog:
     image: mailhog/mailhog
