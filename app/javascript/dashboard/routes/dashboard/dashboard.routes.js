@@ -16,6 +16,7 @@ import Suspended from './suspended/Index.vue';
 import NoAccounts from './noAccounts/Index.vue';
 import OnboardingAccountDetails from './onboarding/Index.vue';
 import { routes as tlinAiAgentRoutes } from './tlinAiAgent/routes';
+import TlinLeadOnboarding from './tlinOnboarding/Index.vue';
 
 const captainEnabled =
   window.globalConfig?.CAPTAIN_ENABLED === true ||
@@ -49,6 +50,14 @@ export default {
         permissions: ['administrator', 'agent', 'custom_role'],
       },
       component: OnboardingAccountDetails,
+    },
+    {
+      path: frontendURL('accounts/:accountId/tlin-onboarding'),
+      name: 'tlin_onboarding',
+      meta: {
+        permissions: ['administrator'],
+      },
+      component: TlinLeadOnboarding,
     },
     {
       path: frontendURL('accounts/:accountId/suspended'),

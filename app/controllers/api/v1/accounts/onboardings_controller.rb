@@ -3,11 +3,12 @@ class Api::V1::Accounts::OnboardingsController < Api::V1::Accounts::BaseControll
 
   def update
     @account = Current.account
-    finalize = finalizing_account_details?
+    finalize = finalizing_tlin_onboarding?
+    return render_invalid_tlin_lead_data if finalize && !valid_tlin_lead_data?
 
     @account.assign_attributes(account_params)
     @account.custom_attributes.merge!(custom_attributes_params)
-    @account.custom_attributes.delete('onboarding_step') if finalize
+    complete_tlin_onboarding! if finalize
     @account.save!
 
     # TODO: re-enable when the help center generation UI is ready to surface progress
@@ -22,8 +23,24 @@ class Api::V1::Accounts::OnboardingsController < Api::V1::Accounts::BaseControll
 
   private
 
-  def finalizing_account_details?
-    @account.custom_attributes['onboarding_step'] == 'account_details'
+  def finalizing_tlin_onboarding?
+    @account.custom_attributes['onboarding_step'].in?(%w[account_details enrichment])
+  end
+
+  def valid_tlin_lead_data?
+    custom_attributes_params[:lead_contact_name].present? &&
+      custom_attributes_params[:lead_whatsapp].to_s.match?(/\A\+[1-9]\d{7,14}\z/)
+  end
+
+  def render_invalid_tlin_lead_data
+    render json: { error: 'lead_contact_name and lead_whatsapp are required' }, status: :unprocessable_entity
+  end
+
+  def complete_tlin_onboarding!
+    # These Account custom attributes are the source for lead export today and
+    # future fazer-ai/agents provisioning; keep the keys stable for both uses.
+    @account.custom_attributes['onboarding_completed'] = true
+    @account.custom_attributes.delete('onboarding_step')
   end
 
   def website
@@ -35,7 +52,18 @@ class Api::V1::Accounts::OnboardingsController < Api::V1::Accounts::BaseControll
   end
 
   def custom_attributes_params
-    params.permit(:industry, :company_size, :timezone, :referral_source, :user_role, :website)
+    params.permit(
+      :industry,
+      :company_size,
+      :timezone,
+      :referral_source,
+      :user_role,
+      :website,
+      :lead_contact_name,
+      :lead_whatsapp,
+      :business_type,
+      :business_offer
+    )
   end
 
   def help_center_generation_status
