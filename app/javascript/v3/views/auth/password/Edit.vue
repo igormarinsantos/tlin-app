@@ -6,17 +6,23 @@ import FormInput from '../../../components/Form/Input.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import { DEFAULT_REDIRECT_URL } from 'dashboard/constants/globals';
 import { setNewPassword } from '../../../api/auth';
+import AuthSplitLayout from '../../../components/Auth/SplitLayout.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
   components: {
     FormInput,
     NextButton,
+    AuthSplitLayout,
   },
   props: {
     resetPasswordToken: { type: String, default: '' },
   },
   setup() {
-    return { v$: useVuelidate() };
+    const store = useStore();
+    const globalConfig = computed(() => store.getters['globalConfig/get']);
+    return { v$: useVuelidate(), globalConfig };
   },
   data() {
     return {
@@ -86,11 +92,13 @@ export default {
 </script>
 
 <template>
-  <div
-    class="flex flex-col justify-center w-full min-h-screen py-12 bg-n-brand/5 dark:bg-n-background sm:px-6 lg:px-8"
+  <AuthSplitLayout
+    :logo="globalConfig.logo"
+    :logo-dark="globalConfig.logoDark"
+    :installation-name="globalConfig.installationName"
   >
     <form
-      class="bg-white shadow sm:mx-auto sm:w-full sm:max-w-lg dark:bg-n-solid-2 p-11 sm:shadow-lg sm:rounded-lg"
+      class="w-full rounded-[1.5rem] border border-n-weak bg-white p-6 shadow-xl shadow-n-slate-12/5 dark:bg-n-solid-2 sm:p-8"
       @submit.prevent="submitForm"
     >
       <h1
@@ -135,5 +143,5 @@ export default {
         />
       </div>
     </form>
-  </div>
+  </AuthSplitLayout>
 </template>

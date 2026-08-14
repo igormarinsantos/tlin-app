@@ -1,4 +1,9 @@
 {
+  "AUTH_LAYOUT": {
+    "EYEBROW": "TLIN",
+    "TITLE": "Your commercial copilot on WhatsApp",
+    "SUBTITLE": "Bring every customer conversation into one calm, intelligent workspace."
+  },
   "LOGIN": {
     "TITLE": "Login to Chatwoot",
     "EMAIL": {
