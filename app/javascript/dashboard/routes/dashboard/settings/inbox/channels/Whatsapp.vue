@@ -107,20 +107,10 @@ const PROVIDER_CATALOG = computed(() => [
   },
 ]);
 
-// Keys shown in the picker. 360Dialog is intentionally hidden in create mode
-// (URL-reachable only) but offered in convert mode where it is a valid target.
-const CREATE_PICKER_KEYS = [
-  PROVIDER_TYPES.WHATSAPP,
-  PROVIDER_TYPES.TWILIO,
-  PROVIDER_TYPES.BAILEYS,
-  PROVIDER_TYPES.ZAPI,
-];
-const CONVERT_PICKER_KEYS = [
-  PROVIDER_TYPES.WHATSAPP,
-  PROVIDER_TYPES.BAILEYS,
-  PROVIDER_TYPES.ZAPI,
-  PROVIDER_TYPES.THREE_SIXTY_DIALOG,
-];
+// Keys shown in the picker. Legacy providers remain supported by the backend
+// and existing inboxes, but new inboxes can only use the supported Tlin paths.
+const CREATE_PICKER_KEYS = [PROVIDER_TYPES.WHATSAPP, PROVIDER_TYPES.BAILEYS];
+const CONVERT_PICKER_KEYS = [PROVIDER_TYPES.WHATSAPP, PROVIDER_TYPES.BAILEYS];
 
 const availableProviders = computed(() => {
   const allowed = isConvertMode.value
