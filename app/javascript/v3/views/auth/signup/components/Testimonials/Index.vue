@@ -36,7 +36,7 @@ onBeforeMount(() => {
       :author-name="testimonial.authorName"
       :author-designation="testimonial.authorCompany"
     />
-    <div class="absolute bottom-8 right-8 grid grid-cols-3 gap-1.5">
+    <div class="absolute bottom-8 right-8 hidden grid-cols-3 gap-1.5 md:grid">
       <span class="w-2 h-2 rounded-full bg-n-gray-5" />
       <span class="w-2 h-2 rounded-full bg-n-gray-5" />
       <span class="w-2 h-2 rounded-full bg-n-gray-5" />
