@@ -461,40 +461,43 @@
   },
   "TLIN_ONBOARDING": {
     "STEP": "Etapa {current} de {total}",
-    "CONTINUE": "Continuar",
-    "FINISH": "Concluir",
-    "SKIP": "Pular por agora",
+    "CONTINUE": "Próximo",
+    "FINISH": "Ir para o Tlin",
+    "BACK": "Voltar",
+    "SKIP": "Pular esta pergunta",
     "OTHER": "Outro",
     "SELECT_PLACEHOLDER": "Selecione uma opção",
     "NAME": {
-      "TITLE": "Como podemos te chamar?",
-      "DESCRIPTION": "Isso ajuda a personalizar sua experiência no Tlin.",
+      "TITLE": "Para começar, como podemos te chamar?",
+      "DESCRIPTION": "Vamos usar seu nome para deixar sua experiência mais pessoal.",
       "PLACEHOLDER": "Seu nome",
       "ERROR": "Conte como podemos te chamar."
     },
     "WHATSAPP": {
-      "TITLE": "Seu WhatsApp",
-      "DESCRIPTION": "Use o formato internacional, por exemplo +5511999999999.",
-      "PLACEHOLDER": "+5511999999999",
-      "ERROR": "Informe um WhatsApp válido no formato internacional."
+      "TITLE": "Qual WhatsApp você usa no trabalho?",
+      "DESCRIPTION": "Detectamos seu país automaticamente. Se precisar, troque a bandeira e informe seu número.",
+      "PLACEHOLDER": "Seu número com DDD",
+      "ERROR": "Informe um WhatsApp válido."
     },
     "REFERRAL": {
-      "TITLE": "Como você conheceu o Tlin?",
-      "DESCRIPTION": "Opcional — isso nos ajuda a melhorar como chegamos a negócios como o seu.",
+      "TITLE": "Como o Tlin chegou até você?",
+      "DESCRIPTION": "Leva poucos segundos e ajuda a gente a chegar a mais negócios como o seu.",
+      "GOOGLE": "Google",
+      "INSTAGRAM": "Instagram",
       "REFERRAL": "Indicação",
       "AD": "Anúncio"
     },
     "BUSINESS_TYPE": {
-      "TITLE": "Qual o tipo do seu negócio?",
-      "DESCRIPTION": "Opcional — usaremos isso para personalizar a futura configuração do seu agente de IA.",
+      "TITLE": "Qual é o tipo do seu negócio?",
+      "DESCRIPTION": "Com isso, vamos preparar sugestões mais úteis para sua operação.",
       "CLINIC": "Clínica",
       "STORE": "Loja",
       "SERVICES": "Serviços",
       "AGENCY": "Agência"
     },
     "BUSINESS_OFFER": {
-      "TITLE": "O que você vende ou oferece?",
-      "DESCRIPTION": "Opcional — uma descrição curta já basta.",
+      "TITLE": "O que sua empresa vende ou oferece?",
+      "DESCRIPTION": "Conte em uma frase. Isso ajuda o Tlin a entender melhor seu contexto.",
       "PLACEHOLDER": "Ex.: consultas, produtos ou serviços"
     }
   },

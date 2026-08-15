@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -7,11 +7,14 @@ import { useAccount } from 'dashboard/composables/useAccount';
 import { useStore } from 'dashboard/composables/store';
 import { frontendURL } from 'dashboard/helper/URLHelper';
 import Button from 'dashboard/components-next/button/Button.vue';
+import PhoneNumberInput from 'dashboard/components-next/phonenumberinput/PhoneNumberInput.vue';
 
 const { t } = useI18n();
 const router = useRouter();
 const store = useStore();
 const { accountId, finishOnboarding } = useAccount();
+const lightLogoUrl = '/brand-assets/logo.svg';
+const darkLogoUrl = '/brand-assets/logo_dark.svg';
 
 const step = ref(0);
 const isSaving = ref(false);
@@ -21,6 +24,44 @@ const leadWhatsapp = ref('');
 const referralSource = ref('');
 const businessType = ref('');
 const businessOffer = ref('');
+const isDraftRestored = ref(false);
+
+const onboardingDraftKey = computed(() => `tlin:onboarding:${accountId.value}`);
+
+const saveDraft = () => {
+  if (!isDraftRestored.value) return;
+
+  window.localStorage.setItem(
+    onboardingDraftKey.value,
+    JSON.stringify({
+      step: step.value,
+      leadContactName: leadContactName.value,
+      leadWhatsapp: leadWhatsapp.value,
+      referralSource: referralSource.value,
+      businessType: businessType.value,
+      businessOffer: businessOffer.value,
+    })
+  );
+};
+
+const referralOptions = computed(() => [
+  { value: 'google', label: t('TLIN_ONBOARDING.REFERRAL.GOOGLE') },
+  { value: 'instagram', label: t('TLIN_ONBOARDING.REFERRAL.INSTAGRAM') },
+  { value: 'referral', label: t('TLIN_ONBOARDING.REFERRAL.REFERRAL') },
+  { value: 'ad', label: t('TLIN_ONBOARDING.REFERRAL.AD') },
+  { value: 'other', label: t('TLIN_ONBOARDING.OTHER') },
+]);
+
+const businessTypeOptions = computed(() => [
+  { value: 'clinic', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.CLINIC') },
+  { value: 'store', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.STORE') },
+  {
+    value: 'services',
+    label: t('TLIN_ONBOARDING.BUSINESS_TYPE.SERVICES'),
+  },
+  { value: 'agency', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.AGENCY') },
+  { value: 'other', label: t('TLIN_ONBOARDING.OTHER') },
+]);
 
 const steps = computed(() => [
   {
@@ -54,11 +95,58 @@ const steps = computed(() => [
 
 const currentStep = computed(() => steps.value[step.value]);
 const isLastStep = computed(() => step.value === steps.value.length - 1);
-const normalizedWhatsapp = computed(() => leadWhatsapp.value.replace(/\s/g, ''));
-const isWhatsappValid = computed(() => /^\+[1-9]\d{7,14}$/.test(normalizedWhatsapp.value));
+
+const restoreDraft = () => {
+  const savedDraft = window.localStorage.getItem(onboardingDraftKey.value);
+  if (!savedDraft) return;
+
+  try {
+    const draft = JSON.parse(savedDraft);
+    step.value = Number.isInteger(draft.step)
+      ? Math.min(Math.max(draft.step, 0), steps.value.length - 1)
+      : 0;
+    leadContactName.value = draft.leadContactName || '';
+    leadWhatsapp.value = draft.leadWhatsapp || '';
+    referralSource.value = draft.referralSource || '';
+    businessType.value = draft.businessType || '';
+    businessOffer.value = draft.businessOffer || '';
+  } catch {
+    window.localStorage.removeItem(onboardingDraftKey.value);
+  }
+};
+
+const validationError = computed(() =>
+  currentStep.value.key === 'name'
+    ? t('TLIN_ONBOARDING.NAME.ERROR')
+    : t('TLIN_ONBOARDING.WHATSAPP.ERROR')
+);
+const normalizedWhatsapp = computed(() =>
+  leadWhatsapp.value.replace(/\s/g, '')
+);
+const isWhatsappValid = computed(() =>
+  /^\+[1-9]\d{7,14}$/.test(normalizedWhatsapp.value)
+);
+
+onMounted(() => {
+  restoreDraft();
+  isDraftRestored.value = true;
+});
+
+watch(
+  [
+    step,
+    leadContactName,
+    leadWhatsapp,
+    referralSource,
+    businessType,
+    businessOffer,
+  ],
+  saveDraft
+);
 
 const isCurrentStepValid = () => {
-  if (currentStep.value.key === 'name') return leadContactName.value.trim().length > 0;
+  if (currentStep.value.key === 'name')
+    return leadContactName.value.trim().length > 0;
   if (currentStep.value.key === 'whatsapp') return isWhatsappValid.value;
   return true;
 };
@@ -86,6 +174,7 @@ const continueOnboarding = async () => {
       business_type: businessType.value,
       business_offer: businessOffer.value.trim(),
     });
+    window.localStorage.removeItem(onboardingDraftKey.value);
     store.commit('RESET_ONBOARDING', accountId.value);
     router.push(frontendURL(`accounts/${accountId.value}/dashboard`));
   } finally {
@@ -97,88 +186,149 @@ const skipStep = () => {
   if (!isLastStep.value) step.value += 1;
   else continueOnboarding();
 };
+
+const goBack = () => {
+  showValidation.value = false;
+  step.value -= 1;
+};
 </script>
 
 <template>
-  <main class="flex flex-1 items-center justify-center w-full min-h-full p-4 sm:p-8">
-    <section class="w-full max-w-xl overflow-hidden rounded-[2rem] border border-n-weak bg-n-solid-1 shadow-xl shadow-n-slate-12/5">
-      <div class="h-2 bg-tlin-gradient" />
-      <div class="p-6 sm:p-10">
-        <p class="text-sm font-medium text-n-slate-10">
-          {{ $t('TLIN_ONBOARDING.STEP', { current: step + 1, total: steps.length }) }}
-        </p>
-        <h1 class="mt-4 text-3xl font-bold tracking-tight text-n-slate-12 sm:text-4xl">
+  <main class="grid min-h-full w-full bg-n-background lg:grid-cols-2">
+    <section
+      class="flex min-h-[42vh] flex-col bg-n-solid-1 px-6 py-8 sm:px-10 lg:min-h-full lg:px-16 lg:py-12"
+    >
+      <header>
+        <img
+          :src="lightLogoUrl"
+          alt="Tlin"
+          class="block h-8 w-auto dark:hidden"
+        />
+        <img
+          :src="darkLogoUrl"
+          alt="Tlin"
+          class="hidden h-8 w-auto dark:block"
+        />
+      </header>
+
+      <div class="my-auto max-w-xl py-10 lg:py-16">
+        <h1
+          class="text-4xl font-semibold leading-tight tracking-tight text-n-slate-12 sm:text-5xl"
+        >
           {{ currentStep.title }}
         </h1>
-        <p class="mt-3 text-base text-n-slate-11">{{ currentStep.description }}</p>
+        <p class="mt-5 max-w-lg text-base leading-7 text-n-slate-11 sm:text-lg">
+          {{ currentStep.description }}
+        </p>
+      </div>
+    </section>
 
-        <div class="mt-8">
+    <section
+      class="flex min-h-[58vh] items-center bg-n-background px-6 py-10 sm:px-10 lg:min-h-full lg:px-16 lg:py-12"
+    >
+      <div class="mx-auto w-full max-w-md">
+        <div class="w-full">
           <input
             v-if="currentStep.key === 'name'"
             v-model="leadContactName"
             class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            :aria-label="currentStep.title"
             :placeholder="$t('TLIN_ONBOARDING.NAME.PLACEHOLDER')"
             autocomplete="name"
             @keyup.enter="continueOnboarding"
           />
-          <input
+          <PhoneNumberInput
             v-else-if="currentStep.key === 'whatsapp'"
             v-model="leadWhatsapp"
-            class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
             :placeholder="$t('TLIN_ONBOARDING.WHATSAPP.PLACEHOLDER')"
-            autocomplete="tel"
-            inputmode="tel"
-            @keyup.enter="continueOnboarding"
+            class="[&>div]:!h-12 [&>div]:!rounded-full [&_button]:!h-10 [&_button]:!rounded-full"
           />
-          <select
+          <div
             v-else-if="currentStep.key === 'referral'"
-            v-model="referralSource"
-            class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            class="flex flex-col gap-3"
+            role="group"
+            :aria-label="currentStep.title"
           >
-            <option value="">{{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}</option>
-            <option value="google">Google</option>
-            <option value="instagram">Instagram</option>
-            <option value="referral">{{ $t('TLIN_ONBOARDING.REFERRAL.REFERRAL') }}</option>
-            <option value="ad">{{ $t('TLIN_ONBOARDING.REFERRAL.AD') }}</option>
-            <option value="other">{{ $t('TLIN_ONBOARDING.OTHER') }}</option>
-          </select>
-          <select
+            <button
+              v-for="option in referralOptions"
+              :key="option.value"
+              type="button"
+              class="w-full rounded-full border border-n-weak px-4 py-3 text-left text-sm font-medium text-n-slate-12 transition-colors hover:border-n-brand"
+              :class="
+                referralSource === option.value
+                  ? 'bg-tlin-gradient border-transparent text-n-black'
+                  : 'bg-n-background'
+              "
+              :aria-pressed="referralSource === option.value"
+              @click="referralSource = option.value"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+          <div
             v-else-if="currentStep.key === 'businessType'"
-            v-model="businessType"
-            class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            class="flex flex-col gap-3"
+            role="group"
+            :aria-label="currentStep.title"
           >
-            <option value="">{{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}</option>
-            <option value="clinic">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.CLINIC') }}</option>
-            <option value="store">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.STORE') }}</option>
-            <option value="services">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.SERVICES') }}</option>
-            <option value="agency">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.AGENCY') }}</option>
-            <option value="other">{{ $t('TLIN_ONBOARDING.OTHER') }}</option>
-          </select>
+            <button
+              v-for="option in businessTypeOptions"
+              :key="option.value"
+              type="button"
+              class="w-full rounded-full border border-n-weak px-4 py-3 text-left text-sm font-medium text-n-slate-12 transition-colors hover:border-n-brand"
+              :class="
+                businessType === option.value
+                  ? 'bg-tlin-gradient border-transparent text-n-black'
+                  : 'bg-n-background'
+              "
+              :aria-pressed="businessType === option.value"
+              @click="businessType = option.value"
+            >
+              {{ option.label }}
+            </button>
+          </div>
           <textarea
             v-else
             v-model="businessOffer"
             class="min-h-32 w-full rounded-[1.5rem] border border-n-weak bg-n-background p-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            :aria-label="currentStep.title"
             :placeholder="$t('TLIN_ONBOARDING.BUSINESS_OFFER.PLACEHOLDER')"
           />
-          <p v-if="showValidation" class="mt-3 text-sm font-medium text-n-ruby-11">
-            {{ $t(`TLIN_ONBOARDING.${currentStep.key === 'name' ? 'NAME' : 'WHATSAPP'}.ERROR`) }}
+          <p
+            v-if="showValidation"
+            class="mt-3 text-sm font-medium text-n-ruby-11"
+          >
+            {{ validationError }}
           </p>
-        </div>
 
-        <div class="mt-8 flex flex-wrap items-center gap-3">
-          <Button
-            :is-loading="isSaving"
-            :label="isLastStep ? $t('TLIN_ONBOARDING.FINISH') : $t('TLIN_ONBOARDING.CONTINUE')"
-            size="lg"
-            @click="continueOnboarding"
-          />
-          <Button
-            v-if="!currentStep.required"
-            variant="ghost"
-            :label="$t('TLIN_ONBOARDING.SKIP')"
-            size="lg"
-            @click="skipStep"
-          />
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <Button
+              v-if="step > 0"
+              color="slate"
+              variant="outline"
+              :label="$t('TLIN_ONBOARDING.BACK')"
+              size="lg"
+              @click="goBack"
+            />
+            <Button
+              :is-loading="isSaving"
+              :label="
+                isLastStep
+                  ? $t('TLIN_ONBOARDING.FINISH')
+                  : $t('TLIN_ONBOARDING.CONTINUE')
+              "
+              size="lg"
+              class="!bg-tlin-gradient !text-n-black"
+              @click="continueOnboarding"
+            />
+            <Button
+              v-if="!currentStep.required"
+              variant="ghost"
+              :label="$t('TLIN_ONBOARDING.SKIP')"
+              size="lg"
+              @click="skipStep"
+            />
+          </div>
         </div>
       </div>
     </section>
