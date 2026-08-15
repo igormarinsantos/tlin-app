@@ -460,7 +460,6 @@
     }
   },
   "TLIN_ONBOARDING": {
-    "BRAND": "tlin.ai",
     "STEP": "Etapa {current} de {total}",
     "CONTINUE": "Continuar",
     "FINISH": "Concluir",

@@ -130,21 +130,8 @@ const skipStep = () => {
       </header>
 
       <div class="my-auto max-w-xl py-10 lg:py-16">
-        <div
-          class="mb-8 flex size-12 items-center justify-center rounded-full bg-tlin-gradient text-n-black"
-        >
-          <span class="i-lucide-sparkles size-6" aria-hidden="true" />
-        </div>
-        <p class="text-sm font-semibold text-n-slate-10">
-          {{
-            $t('TLIN_ONBOARDING.STEP', {
-              current: step + 1,
-              total: steps.length,
-            })
-          }}
-        </p>
         <h1
-          class="mt-4 text-4xl font-semibold leading-tight tracking-tight text-n-slate-12 sm:text-5xl"
+          class="text-4xl font-semibold leading-tight tracking-tight text-n-slate-12 sm:text-5xl"
         >
           {{ currentStep.title }}
         </h1>
@@ -152,35 +139,13 @@ const skipStep = () => {
           {{ currentStep.description }}
         </p>
       </div>
-
-      <div class="flex gap-2" aria-hidden="true">
-        <span
-          v-for="(_, index) in steps"
-          :key="index"
-          class="h-1.5 flex-1 rounded-full"
-          :class="index <= step ? 'bg-tlin-gradient' : 'bg-n-alpha-3'"
-        />
-      </div>
     </section>
 
     <section
       class="flex min-h-[58vh] items-center bg-n-background px-6 py-10 sm:px-10 lg:min-h-full lg:px-16 lg:py-12"
     >
       <div class="mx-auto w-full max-w-md">
-        <div class="mb-8 flex items-center justify-between">
-          <span class="text-sm font-medium text-n-slate-10">
-            {{ $t('TLIN_ONBOARDING.BRAND') }}
-          </span>
-          <span
-            class="inline-flex size-9 items-center justify-center rounded-full bg-n-alpha-2 text-n-slate-11"
-          >
-            <span class="i-lucide-sparkles size-4" aria-hidden="true" />
-          </span>
-        </div>
-
-        <div
-          class="rounded-[2rem] border border-n-weak bg-n-solid-1 p-6 sm:p-8"
-        >
+        <div class="w-full">
           <input
             v-if="currentStep.key === 'name'"
             v-model="leadContactName"
