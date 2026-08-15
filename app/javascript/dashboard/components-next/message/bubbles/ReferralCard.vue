@@ -73,6 +73,19 @@ const showImage = computed(
         {{ referral.body }}
       </p>
     </div>
+    <dl
+      v-if="referral.sourceId || referral.ctwaClid"
+      class="grid gap-1 text-xs text-n-slate-11"
+    >
+      <div v-if="referral.sourceId" class="flex gap-1">
+        <dt>{{ t('COMPONENTS.REFERRAL_CARD.SOURCE_ID') }}</dt>
+        <dd class="m-0 break-all">{{ referral.sourceId }}</dd>
+      </div>
+      <div v-if="referral.ctwaClid" class="flex gap-1">
+        <dt>{{ t('COMPONENTS.REFERRAL_CARD.CTWA_CLID') }}</dt>
+        <dd class="m-0 break-all">{{ referral.ctwaClid }}</dd>
+      </div>
+    </dl>
     <div
       v-if="adUrl"
       class="flex items-center gap-1 text-xs font-medium text-n-slate-12"

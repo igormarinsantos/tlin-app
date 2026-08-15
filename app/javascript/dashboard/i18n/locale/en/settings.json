@@ -325,7 +325,9 @@
     },
     "REFERRAL_CARD": {
       "AD_LABEL": "From an ad",
-      "VIEW_AD": "View ad"
+      "VIEW_AD": "View ad",
+      "SOURCE_ID": "Ad ID:",
+      "CTWA_CLID": "Click ID:"
     },
     "LOCATION_BUBBLE": {
       "SEE_ON_MAP": "See on map"

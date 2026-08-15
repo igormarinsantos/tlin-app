@@ -125,3 +125,11 @@ account.save!
 account.custom_attributes['trial_ends_at'] = 7.days.from_now.iso8601 # estende teste
 account.save!
 ```
+
+## Atribuição Click-to-WhatsApp (CTWA)
+
+O recebimento já captura passivamente o objeto `referral` da primeira mensagem de um anúncio Click-to-WhatsApp, sem qualquer chamada à Meta CAPI. O caminho oficial é `Whatsapp::IncomingMessageWhatsappCloudService` → `Whatsapp::IncomingMessageBaseService`; `Whatsapp::IncomingMessageServiceHelpers#normalize_cloud_referral` lê `ctwa_clid`, `source_id`, `source_type`, `source_url`, `headline`, `body` e mídia. O `headline` é normalizado como `title`, e mídia como `media_type`/`thumbnail_url`, para manter o mesmo formato do Baileys (`normalize_baileys_referral`).
+
+O objeto normalizado é salvo na primeira mensagem em `Message#content_attributes['referral']` e, como atribuição de primeiro toque, em `Conversation#additional_attributes['referral']`. Se uma conversa existente ainda não tiver essa chave, ela é preenchida uma única vez; referrals posteriores não sobrescrevem o primeiro. Webhooks sem `referral` não gravam marcador algum. O contato não recebe uma cópia: a conversa é a fonte de atribuição, evitando que o mesmo contato misture campanhas diferentes.
+
+Para conferir no painel, abra a primeira mensagem recebida da conversa: o card **“Veio de um anúncio”** mostra a criativa e agora também **ID do anúncio** (`source_id`) e **ID do clique** (`ctwa_clid`). Para leitura completa e para o futuro adaptador CAPI, use `Conversation.find(CONVERSATION_ID).additional_attributes['referral']` ou `Message.find(MESSAGE_ID).content_attributes['referral']` no Rails console. O próximo passo de CAPI deve apenas ler esses campos; esta base não envia, agenda nem registra conversões na Meta.
