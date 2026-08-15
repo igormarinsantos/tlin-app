@@ -12,7 +12,6 @@ import AnalyticsHelper from 'dashboard/helper/AnalyticsHelper';
 import { SESSION_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 
 // components
-import SimpleDivider from '../../components/Divider/SimpleDivider.vue';
 import FormInput from '../../components/Form/Input.vue';
 import GoogleOAuthButton from '../../components/GoogleOauth/Button.vue';
 import Spinner from 'shared/components/Spinner.vue';
@@ -38,7 +37,6 @@ export default {
     GoogleOAuthButton,
     Spinner,
     NextButton,
-    SimpleDivider,
     MfaVerification,
     SessionLimitOverlay,
     Icon,
@@ -76,6 +74,7 @@ export default {
       mfaToken: null,
       sessionsLimitReached: false,
       limitedSessions: [],
+      showPasswordStep: Boolean(this.email),
     };
   },
   validations() {
@@ -230,6 +229,19 @@ export default {
 
       this.submitLogin();
     },
+    continueWithEmail() {
+      this.v$.credentials.email.$touch();
+      if (this.v$.credentials.email.$invalid) {
+        this.showAlertMessage(this.$t('LOGIN.EMAIL.ERROR'));
+        return;
+      }
+
+      this.showPasswordStep = true;
+    },
+    changeEmail() {
+      this.showPasswordStep = false;
+      this.credentials.password = '';
+    },
     handleMfaVerified() {
       // MFA verification successful, continue with login
       this.handleImpersonation();
@@ -318,23 +330,24 @@ export default {
     <!-- Regular Login Section -->
     <section
       v-else
-      class="w-full rounded-[1.5rem] border border-n-weak bg-white p-6 dark:bg-n-solid-2 sm:p-8"
+      class="w-full rounded-[1.5rem] border border-n-weak bg-white p-5 dark:bg-n-solid-2 sm:p-6"
       :class="{
-        'mb-8 mt-15': !showGoogleOAuth,
         'animate-wiggle': loginApi.hasErrored,
       }"
     >
-      <h2 class="text-2xl font-semibold tracking-tight text-n-slate-12">
+      <h2
+        class="text-center text-2xl font-semibold tracking-tight text-n-slate-12"
+      >
         {{ replaceInstallationName($t('LOGIN.TITLE')) }}
       </h2>
-      <p v-if="showSignupLink" class="mt-2 text-sm text-n-slate-11">
+      <p v-if="showSignupLink" class="mt-2 text-center text-sm text-n-slate-11">
         {{ $t('COMMON.OR') }}
         <router-link to="auth/signup" class="font-medium text-n-blue-11">
           {{ $t('LOGIN.CREATE_NEW_ACCOUNT') }}
         </router-link>
       </p>
       <div v-if="!email">
-        <div class="mt-6 flex flex-col gap-4">
+        <div v-if="!showPasswordStep" class="mt-6 flex flex-col gap-4">
           <GoogleOAuthButton v-if="showGoogleOAuth" />
           <div v-if="showSamlLogin" class="text-center">
             <router-link
@@ -350,32 +363,56 @@ export default {
               </span>
             </router-link>
           </div>
-          <SimpleDivider
+          <p
             v-if="showGoogleOAuth || showSamlLogin"
-            :label="$t('COMMON.OR')"
-            class="uppercase"
-          />
+            class="text-center text-xs font-medium uppercase text-n-slate-10"
+          >
+            {{ $t('COMMON.OR') }}
+          </p>
+
+          <form class="space-y-5" @submit.prevent="continueWithEmail">
+            <FormInput
+              v-model="credentials.email"
+              name="email_address"
+              type="text"
+              data-testid="email_input"
+              :tabindex="1"
+              required
+              :label="$t('LOGIN.EMAIL.LABEL')"
+              :placeholder="$t('LOGIN.EMAIL.PLACEHOLDER')"
+              :has-error="v$.credentials.email.$error"
+              @input="v$.credentials.email.$touch"
+            />
+            <NextButton
+              lg
+              type="submit"
+              class="w-full"
+              :tabindex="2"
+              :label="$t('LOGIN.CONTINUE_WITH_EMAIL')"
+            />
+          </form>
         </div>
-        <form class="space-y-5" @submit.prevent="submitFormLogin">
-          <FormInput
-            v-model="credentials.email"
-            name="email_address"
-            type="text"
-            data-testid="email_input"
-            :tabindex="1"
-            required
-            :label="$t('LOGIN.EMAIL.LABEL')"
-            :placeholder="$t('LOGIN.EMAIL.PLACEHOLDER')"
-            :has-error="v$.credentials.email.$error"
-            @input="v$.credentials.email.$touch"
-          />
+
+        <form v-else class="mt-6 space-y-5" @submit.prevent="submitFormLogin">
+          <div class="flex items-center justify-between gap-3 text-sm">
+            <span class="truncate text-n-slate-11">{{
+              credentials.email
+            }}</span>
+            <button
+              type="button"
+              class="shrink-0 font-medium text-n-blue-11 hover:underline"
+              @click="changeEmail"
+            >
+              {{ $t('LOGIN.CHANGE_EMAIL') }}
+            </button>
+          </div>
           <FormInput
             v-model="credentials.password"
             type="password"
             name="password"
             data-testid="password_input"
             required
-            :tabindex="2"
+            :tabindex="1"
             :label="$t('LOGIN.PASSWORD.LABEL')"
             :placeholder="$t('LOGIN.PASSWORD.PLACEHOLDER')"
             :has-error="v$.credentials.password.$error"
@@ -385,7 +422,7 @@ export default {
               <router-link
                 to="auth/reset/password"
                 class="text-sm text-link"
-                tabindex="4"
+                tabindex="3"
               >
                 {{ $t('LOGIN.FORGOT_PASSWORD') }}
               </router-link>
@@ -396,7 +433,7 @@ export default {
             type="submit"
             data-testid="submit_button"
             class="w-full"
-            :tabindex="3"
+            :tabindex="2"
             :label="$t('LOGIN.SUBMIT')"
             :disabled="loginApi.showLoading"
             :is-loading="loginApi.showLoading"

@@ -8,20 +8,19 @@ defineProps({
 });
 
 const { t } = useI18n();
-const loginHero = '/brand-assets/login-hero.jpg';
 </script>
 
 <template>
   <main
-    class="h-screen min-h-screen max-h-screen overflow-hidden bg-n-background p-3 font-sans sm:p-6"
+    class="h-dvh min-h-dvh overflow-hidden bg-n-background p-3 font-sans sm:p-6"
   >
     <div
-      class="mx-auto grid h-full min-h-full max-h-full max-w-[1440px] grid-cols-1 overflow-hidden rounded-[2rem] bg-n-surface-1 lg:grid-cols-2"
+      class="mx-auto grid h-full min-h-0 max-w-[1440px] grid-cols-1 overflow-hidden rounded-[2rem] bg-n-surface-1 lg:grid-cols-2"
     >
       <section
-        class="flex min-w-0 flex-col px-6 py-8 sm:px-10 lg:px-16 lg:py-12"
+        class="flex min-h-0 min-w-0 flex-col overflow-hidden px-6 py-5 sm:px-10 lg:px-14 lg:py-6"
       >
-        <header>
+        <header class="shrink-0">
           <img
             :src="logo"
             :alt="installationName"
@@ -35,35 +34,26 @@ const loginHero = '/brand-assets/login-hero.jpg';
           />
         </header>
 
-        <div class="my-auto w-full max-w-[30rem] py-8 lg:py-12">
+        <div class="my-auto mx-auto w-full max-w-[30rem] py-4 lg:py-6">
           <h1
-            class="text-4xl font-semibold tracking-tight text-n-slate-12 sm:text-5xl"
+            class="text-center text-[clamp(2rem,5vh,3rem)] font-semibold leading-[1.05] tracking-tight text-n-slate-12"
           >
             {{ t('AUTH_LAYOUT.TITLE') }}
           </h1>
-          <p class="mt-4 max-w-md text-base leading-7 text-n-slate-11">
+          <p
+            class="mx-auto mt-3 max-w-md text-center text-sm leading-6 text-n-slate-11 sm:text-base"
+          >
             {{ t('AUTH_LAYOUT.SUBTITLE') }}
           </p>
 
-          <div class="mt-10 w-full">
+          <div class="mt-6 w-full lg:mt-8">
             <slot />
           </div>
         </div>
       </section>
 
       <aside class="hidden p-3 lg:block">
-        <div
-          class="relative h-full min-h-[640px] overflow-hidden rounded-[1.5rem] bg-tlin-gradient"
-        >
-          <img
-            :src="loginHero"
-            alt=""
-            class="h-full w-full object-cover opacity-90 mix-blend-soft-light"
-          />
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-n-slate-12/30 via-transparent to-white/10"
-          />
-        </div>
+        <div class="h-full min-h-[640px] rounded-[1.5rem] bg-tlin-gradient" />
       </aside>
     </div>
   </main>
