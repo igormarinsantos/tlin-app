@@ -22,6 +22,12 @@ O mecanismo padrão do fork para Enterprise é `ChatwootApp.enterprise?`: ele de
 - Para habilitar explicitamente (não permitido para o Tlin), seria necessário `CAPTAIN_ENABLED=true` e uma edição Enterprise ativa.
 - `ChatwootApp.captain_enabled?` exige as duas condições: Enterprise disponível e a flag booleana verdadeira.
 - Com a flag desligada, as rotas Rails `/api/v1/accounts/:account_id/captain/**` não são registradas no boot e as rotas Vue de Captain, inclusive Settings, não são registradas. O código permanece intacto para não dificultar sincronizações do fork.
+
+### Copiloto SDR próprio
+
+O Copiloto Tlin é uma integração OSS própria e não depende de Captain ou de `enterprise/`. A rota `POST /api/v1/accounts/:account_id/tlin_copilot` resolve a conversa exclusivamente por `Current.account`, autoriza a leitura dela e envia no máximo as últimas 30 mensagens públicas para a OpenAI. As skills ficam em `app/services/tlin_copilot/skill_registry.rb`; o serviço retorna apenas uma sugestão para o atendente copiar ou inserir manualmente, sem qualquer envio automático.
+
+Configure `OPENAI_API_KEY` somente no ambiente do servidor. `TLIN_COPILOT_MODEL` é opcional e usa `gpt-4o-mini` por padrão; `TLIN_COPILOT_TIMEOUT_SECONDS` usa 20 segundos. Os logs estruturados `tlin_copilot.usage` registram conta, conversa, skill, modelo e tokens, sem conteúdo da conversa.
 - `DISABLE_ENTERPRISE=true` continua sendo o kill switch mais amplo e deve permanecer definido nos ambientes Tlin que não precisam de qualquer overlay comercial.
 
 ### WhatsApp Cloud API e o proxy Meta
