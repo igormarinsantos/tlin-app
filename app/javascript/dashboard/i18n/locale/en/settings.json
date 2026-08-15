@@ -364,7 +364,7 @@
     "COMPANIES": "Companies",
     "ALL_COMPANIES": "All Companies",
     "INTERNAL_CHAT": "Internal Chat",
-    "TLIN_AI_AGENT": "AI Agent",
+    "TLIN_AI_AGENT": "Tlin",
     "KANBAN": "Kanban",
     "CAPTAIN": "Captain",
     "CAPTAIN_ASSISTANTS": "Assistants",
@@ -456,11 +456,11 @@
     "CONVERSATION_WORKFLOW": "Conversation Workflow"
   },
   "TLIN_AI_AGENT": {
-    "TITLE": "Activate your AI Agent",
-    "DESCRIPTION": "Your AI agent answers, qualifies and schedules on WhatsApp 24/7.",
-    "DETAIL": "Connect this premium capability when you are ready to automate your commercial operation.",
-    "ACTIVATE": "Activate now",
-    "AVAILABILITY": "Available on the Scale plan — talk to us."
+    "TITLE": "Meet Tlin",
+    "DESCRIPTION": "Your commercial agent that never sleeps",
+    "DETAIL": "Tlin answers, qualifies, and schedules on WhatsApp — 24 hours a day, 7 days a week. While you focus on what matters, it speaks with every lead, understands what they need, and moves your sales forward. No queues, no forgotten leads, no 'just a moment'.",
+    "ACTIVATE": "Activate Tlin",
+    "AVAILABILITY": "Available for activation. Talk to us."
   },
   "TLIN_ONBOARDING": {
     "STEP": "Step {current} of {total}",
