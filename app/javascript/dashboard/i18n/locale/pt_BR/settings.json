@@ -460,13 +460,15 @@
     },
     "WHATSAPP": {
       "TITLE": "Seu WhatsApp",
-      "DESCRIPTION": "Use o formato internacional, por exemplo +5511999999999.",
-      "PLACEHOLDER": "+5511999999999",
+      "DESCRIPTION": "Digite seu DDD e número. Adicionamos o +55 automaticamente.",
+      "PLACEHOLDER": "(11) 99999-9999",
       "ERROR": "Informe um WhatsApp válido no formato internacional."
     },
     "REFERRAL": {
       "TITLE": "Como você conheceu o Tlin?",
       "DESCRIPTION": "Opcional — isso nos ajuda a melhorar como chegamos a negócios como o seu.",
+      "GOOGLE": "Google",
+      "INSTAGRAM": "Instagram",
       "REFERRAL": "Indicação",
       "AD": "Anúncio"
     },

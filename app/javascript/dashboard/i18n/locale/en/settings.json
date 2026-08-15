@@ -486,13 +486,15 @@
     },
     "WHATSAPP": {
       "TITLE": "Your WhatsApp",
-      "DESCRIPTION": "Use the international format, for example +5511999999999.",
-      "PLACEHOLDER": "+5511999999999",
+      "DESCRIPTION": "Enter your Brazilian area code and number. We add +55 automatically.",
+      "PLACEHOLDER": "(11) 99999-9999",
       "ERROR": "Enter a valid WhatsApp number in international format."
     },
     "REFERRAL": {
       "TITLE": "How did you hear about Tlin?",
       "DESCRIPTION": "Optional — it helps us improve how we reach businesses like yours.",
+      "GOOGLE": "Google",
+      "INSTAGRAM": "Instagram",
       "REFERRAL": "Referral",
       "AD": "Ad"
     },

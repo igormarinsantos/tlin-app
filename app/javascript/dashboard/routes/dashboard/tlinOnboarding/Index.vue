@@ -54,11 +54,38 @@ const steps = computed(() => [
 
 const currentStep = computed(() => steps.value[step.value]);
 const isLastStep = computed(() => step.value === steps.value.length - 1);
-const normalizedWhatsapp = computed(() => leadWhatsapp.value.replace(/\s/g, ''));
-const isWhatsappValid = computed(() => /^\+[1-9]\d{7,14}$/.test(normalizedWhatsapp.value));
+const referralOptions = computed(() => [
+  { value: 'google', label: t('TLIN_ONBOARDING.REFERRAL.GOOGLE') },
+  { value: 'instagram', label: t('TLIN_ONBOARDING.REFERRAL.INSTAGRAM') },
+  { value: 'referral', label: t('TLIN_ONBOARDING.REFERRAL.REFERRAL') },
+  { value: 'ad', label: t('TLIN_ONBOARDING.REFERRAL.AD') },
+  { value: 'other', label: t('TLIN_ONBOARDING.OTHER') },
+]);
+const businessTypeOptions = computed(() => [
+  { value: 'clinic', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.CLINIC') },
+  { value: 'store', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.STORE') },
+  { value: 'services', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.SERVICES') },
+  { value: 'agency', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.AGENCY') },
+  { value: 'other', label: t('TLIN_ONBOARDING.OTHER') },
+]);
+const normalizedWhatsapp = computed(() => {
+  const input = leadWhatsapp.value.trim();
+  const digits = input.replace(/\D/g, '');
+  if (!digits) return '';
+
+  if (input.startsWith('+')) return `+${digits}`;
+  if (/^55\d{10,11}$/.test(digits)) return `+${digits}`;
+  if (/^\d{10,11}$/.test(digits)) return `+55${digits}`;
+
+  return `+${digits}`;
+});
+const isWhatsappValid = computed(() =>
+  /^\+[1-9]\d{7,14}$/.test(normalizedWhatsapp.value)
+);
 
 const isCurrentStepValid = () => {
-  if (currentStep.value.key === 'name') return leadContactName.value.trim().length > 0;
+  if (currentStep.value.key === 'name')
+    return leadContactName.value.trim().length > 0;
   if (currentStep.value.key === 'whatsapp') return isWhatsappValid.value;
   return true;
 };
@@ -100,17 +127,30 @@ const skipStep = () => {
 </script>
 
 <template>
-  <main class="flex flex-1 items-center justify-center w-full min-h-full p-4 sm:p-8">
-    <section class="w-full max-w-xl overflow-hidden rounded-[2rem] border border-n-weak bg-n-solid-1 shadow-xl shadow-n-slate-12/5">
+  <main
+    class="flex flex-1 items-center justify-center w-full min-h-full p-4 sm:p-8"
+  >
+    <section
+      class="w-full max-w-xl overflow-hidden rounded-[2rem] border border-n-weak bg-n-solid-1 shadow-xl shadow-n-slate-12/5"
+    >
       <div class="h-2 bg-tlin-gradient" />
       <div class="p-6 sm:p-10">
         <p class="text-sm font-medium text-n-slate-10">
-          {{ $t('TLIN_ONBOARDING.STEP', { current: step + 1, total: steps.length }) }}
+          {{
+            $t('TLIN_ONBOARDING.STEP', {
+              current: step + 1,
+              total: steps.length,
+            })
+          }}
         </p>
-        <h1 class="mt-4 text-3xl font-bold tracking-tight text-n-slate-12 sm:text-4xl">
+        <h1
+          class="mt-4 text-3xl font-bold tracking-tight text-n-slate-12 sm:text-4xl"
+        >
           {{ currentStep.title }}
         </h1>
-        <p class="mt-3 text-base text-n-slate-11">{{ currentStep.description }}</p>
+        <p class="mt-3 text-base text-n-slate-11">
+          {{ currentStep.description }}
+        </p>
 
         <div class="mt-8">
           <input
@@ -130,45 +170,70 @@ const skipStep = () => {
             inputmode="tel"
             @keyup.enter="continueOnboarding"
           />
-          <select
+          <div
             v-else-if="currentStep.key === 'referral'"
-            v-model="referralSource"
-            class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            class="grid grid-cols-2 gap-3"
           >
-            <option value="">{{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}</option>
-            <option value="google">Google</option>
-            <option value="instagram">Instagram</option>
-            <option value="referral">{{ $t('TLIN_ONBOARDING.REFERRAL.REFERRAL') }}</option>
-            <option value="ad">{{ $t('TLIN_ONBOARDING.REFERRAL.AD') }}</option>
-            <option value="other">{{ $t('TLIN_ONBOARDING.OTHER') }}</option>
-          </select>
-          <select
+            <button
+              v-for="option in referralOptions"
+              :key="option.value"
+              type="button"
+              class="min-h-12 rounded-full border px-4 text-sm font-medium transition-colors"
+              :class="
+                referralSource === option.value
+                  ? 'border-transparent bg-tlin-gradient text-n-black'
+                  : 'border-n-weak bg-n-background text-n-slate-12 hover:border-n-brand'
+              "
+              @click="referralSource = option.value"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+          <div
             v-else-if="currentStep.key === 'businessType'"
-            v-model="businessType"
-            class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            class="grid grid-cols-2 gap-3"
           >
-            <option value="">{{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}</option>
-            <option value="clinic">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.CLINIC') }}</option>
-            <option value="store">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.STORE') }}</option>
-            <option value="services">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.SERVICES') }}</option>
-            <option value="agency">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.AGENCY') }}</option>
-            <option value="other">{{ $t('TLIN_ONBOARDING.OTHER') }}</option>
-          </select>
+            <button
+              v-for="option in businessTypeOptions"
+              :key="option.value"
+              type="button"
+              class="min-h-12 rounded-full border px-4 text-sm font-medium transition-colors"
+              :class="
+                businessType === option.value
+                  ? 'border-transparent bg-tlin-gradient text-n-black'
+                  : 'border-n-weak bg-n-background text-n-slate-12 hover:border-n-brand'
+              "
+              @click="businessType = option.value"
+            >
+              {{ option.label }}
+            </button>
+          </div>
           <textarea
             v-else
             v-model="businessOffer"
             class="min-h-32 w-full rounded-[1.5rem] border border-n-weak bg-n-background p-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
             :placeholder="$t('TLIN_ONBOARDING.BUSINESS_OFFER.PLACEHOLDER')"
           />
-          <p v-if="showValidation" class="mt-3 text-sm font-medium text-n-ruby-11">
-            {{ $t(`TLIN_ONBOARDING.${currentStep.key === 'name' ? 'NAME' : 'WHATSAPP'}.ERROR`) }}
+          <p
+            v-if="showValidation"
+            class="mt-3 text-sm font-medium text-n-ruby-11"
+          >
+            {{
+              $t(
+                `TLIN_ONBOARDING.${currentStep.key === 'name' ? 'NAME' : 'WHATSAPP'}.ERROR`
+              )
+            }}
           </p>
         </div>
 
         <div class="mt-8 flex flex-wrap items-center gap-3">
           <Button
             :is-loading="isSaving"
-            :label="isLastStep ? $t('TLIN_ONBOARDING.FINISH') : $t('TLIN_ONBOARDING.CONTINUE')"
+            :label="
+              isLastStep
+                ? $t('TLIN_ONBOARDING.FINISH')
+                : $t('TLIN_ONBOARDING.CONTINUE')
+            "
             size="lg"
             @click="continueOnboarding"
           />
