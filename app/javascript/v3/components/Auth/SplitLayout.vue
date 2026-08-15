@@ -13,13 +13,13 @@ const loginHero = '/brand-assets/login-hero.jpg';
 
 <template>
   <main
-    class="h-screen min-h-screen max-h-screen overflow-hidden bg-n-background p-3 font-sans sm:p-6"
+    class="h-dvh min-h-dvh overflow-hidden bg-n-background p-3 font-sans sm:p-6"
   >
     <div
-      class="mx-auto grid h-full min-h-full max-h-full max-w-[1440px] grid-cols-1 overflow-hidden rounded-[2rem] bg-n-surface-1 lg:grid-cols-2"
+      class="mx-auto grid h-full min-h-0 max-w-[1440px] grid-cols-1 overflow-hidden rounded-[2rem] bg-n-surface-1 lg:grid-cols-2"
     >
       <section
-        class="flex min-w-0 flex-col px-6 py-8 sm:px-10 lg:px-16 lg:py-12"
+        class="flex min-h-0 min-w-0 flex-col overflow-y-auto px-6 py-8 sm:px-10 lg:px-16 lg:py-12"
       >
         <header>
           <img
