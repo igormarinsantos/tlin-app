@@ -35,7 +35,7 @@ const deletedByContact = computed(
 );
 
 const varaintBaseMap = {
-  [MESSAGE_VARIANTS.AGENT]: 'bg-tlin-gradient text-white',
+  [MESSAGE_VARIANTS.AGENT]: 'bg-tlin-gradient text-n-black',
   [MESSAGE_VARIANTS.PRIVATE]:
     'bg-n-solid-amber text-n-amber-12 [&_.prosemirror-mention-node]:font-semibold',
   [MESSAGE_VARIANTS.USER]: 'bg-n-slate-4 text-n-slate-12',
