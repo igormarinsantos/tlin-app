@@ -7,6 +7,7 @@ import { useAccount } from 'dashboard/composables/useAccount';
 import { useStore } from 'dashboard/composables/store';
 import { frontendURL } from 'dashboard/helper/URLHelper';
 import Button from 'dashboard/components-next/button/Button.vue';
+import PhoneNumberInput from 'dashboard/components-next/phonenumberinput/PhoneNumberInput.vue';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -23,6 +24,25 @@ const leadWhatsapp = ref('');
 const referralSource = ref('');
 const businessType = ref('');
 const businessOffer = ref('');
+
+const referralOptions = computed(() => [
+  { value: 'google', label: t('TLIN_ONBOARDING.REFERRAL.GOOGLE') },
+  { value: 'instagram', label: t('TLIN_ONBOARDING.REFERRAL.INSTAGRAM') },
+  { value: 'referral', label: t('TLIN_ONBOARDING.REFERRAL.REFERRAL') },
+  { value: 'ad', label: t('TLIN_ONBOARDING.REFERRAL.AD') },
+  { value: 'other', label: t('TLIN_ONBOARDING.OTHER') },
+]);
+
+const businessTypeOptions = computed(() => [
+  { value: 'clinic', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.CLINIC') },
+  { value: 'store', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.STORE') },
+  {
+    value: 'services',
+    label: t('TLIN_ONBOARDING.BUSINESS_TYPE.SERVICES'),
+  },
+  { value: 'agency', label: t('TLIN_ONBOARDING.BUSINESS_TYPE.AGENCY') },
+  { value: 'other', label: t('TLIN_ONBOARDING.OTHER') },
+]);
 
 const steps = computed(() => [
   {
@@ -155,60 +175,56 @@ const skipStep = () => {
             autocomplete="name"
             @keyup.enter="continueOnboarding"
           />
-          <input
+          <PhoneNumberInput
             v-else-if="currentStep.key === 'whatsapp'"
             v-model="leadWhatsapp"
-            class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
-            :aria-label="currentStep.title"
             :placeholder="$t('TLIN_ONBOARDING.WHATSAPP.PLACEHOLDER')"
-            autocomplete="tel"
-            inputmode="tel"
-            @keyup.enter="continueOnboarding"
+            class="[&>div]:!h-12 [&>div]:!rounded-full [&_button]:!h-10 [&_button]:!rounded-full"
           />
-          <select
+          <div
             v-else-if="currentStep.key === 'referral'"
-            v-model="referralSource"
-            class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            class="flex flex-wrap gap-3"
+            role="group"
             :aria-label="currentStep.title"
           >
-            <option value="">
-              {{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}
-            </option>
-            <option value="google">
-              {{ $t('TLIN_ONBOARDING.REFERRAL.GOOGLE') }}
-            </option>
-            <option value="instagram">
-              {{ $t('TLIN_ONBOARDING.REFERRAL.INSTAGRAM') }}
-            </option>
-            <option value="referral">
-              {{ $t('TLIN_ONBOARDING.REFERRAL.REFERRAL') }}
-            </option>
-            <option value="ad">{{ $t('TLIN_ONBOARDING.REFERRAL.AD') }}</option>
-            <option value="other">{{ $t('TLIN_ONBOARDING.OTHER') }}</option>
-          </select>
-          <select
+            <button
+              v-for="option in referralOptions"
+              :key="option.value"
+              type="button"
+              class="rounded-full border border-n-weak px-4 py-3 text-sm font-medium text-n-slate-12 transition-colors hover:border-n-brand"
+              :class="
+                referralSource === option.value
+                  ? 'bg-tlin-gradient border-transparent text-n-black'
+                  : 'bg-n-background'
+              "
+              :aria-pressed="referralSource === option.value"
+              @click="referralSource = option.value"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+          <div
             v-else-if="currentStep.key === 'businessType'"
-            v-model="businessType"
-            class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            class="flex flex-wrap gap-3"
+            role="group"
             :aria-label="currentStep.title"
           >
-            <option value="">
-              {{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}
-            </option>
-            <option value="clinic">
-              {{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.CLINIC') }}
-            </option>
-            <option value="store">
-              {{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.STORE') }}
-            </option>
-            <option value="services">
-              {{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.SERVICES') }}
-            </option>
-            <option value="agency">
-              {{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.AGENCY') }}
-            </option>
-            <option value="other">{{ $t('TLIN_ONBOARDING.OTHER') }}</option>
-          </select>
+            <button
+              v-for="option in businessTypeOptions"
+              :key="option.value"
+              type="button"
+              class="rounded-full border border-n-weak px-4 py-3 text-sm font-medium text-n-slate-12 transition-colors hover:border-n-brand"
+              :class="
+                businessType === option.value
+                  ? 'bg-tlin-gradient border-transparent text-n-black'
+                  : 'bg-n-background'
+              "
+              :aria-pressed="businessType === option.value"
+              @click="businessType = option.value"
+            >
+              {{ option.label }}
+            </button>
+          </div>
           <textarea
             v-else
             v-model="businessOffer"
