@@ -1,6 +1,9 @@
 <script>
 import SnackbarContainer from './components/SnackBar/Container.vue';
 
+const DEFAULT_AUTH_LOCALE = 'pt_BR';
+const AUTH_LOCALE_STORAGE_KEY = 'tlin.auth.locale';
+
 export default {
   components: { SnackbarContainer },
   data() {
@@ -9,7 +12,7 @@ export default {
   mounted() {
     this.setColorTheme();
     this.listenToThemeChanges();
-    this.setLocale(window.chatwootConfig.selectedLocale);
+    this.setLocale();
   },
   methods: {
     setColorTheme() {
@@ -34,10 +37,21 @@ export default {
         }
       };
     },
-    setLocale(locale) {
-      if (locale) {
-        this.$root.$i18n.locale = locale;
-      }
+    setLocale() {
+      const storedLocale = window.localStorage.getItem(AUTH_LOCALE_STORAGE_KEY);
+      const browserLocale = window.navigator.language?.replace('-', '_');
+      const localeCandidates = [
+        storedLocale,
+        browserLocale?.startsWith('pt') ? DEFAULT_AUTH_LOCALE : browserLocale,
+        browserLocale?.split('_')[0],
+        window.chatwootConfig.selectedLocale,
+        DEFAULT_AUTH_LOCALE,
+      ];
+      const locale = localeCandidates.find(candidate =>
+        this.$root.$i18n.availableLocales.includes(candidate)
+      );
+
+      this.$root.$i18n.locale = locale || DEFAULT_AUTH_LOCALE;
     },
   },
 };
