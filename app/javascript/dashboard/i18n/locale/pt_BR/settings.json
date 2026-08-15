@@ -275,6 +275,19 @@
   "APP_GLOBAL": {
     "TRIAL_MESSAGE": "dias de teste restantes.",
     "TRAIL_BUTTON": "Comprar agora",
+    "TLIN_TRIAL": {
+      "DAYS_REMAINING": "Faltam {count} dias no seu teste",
+      "ENDED_TITLE": "Seu teste terminou",
+      "ENDED_MESSAGE": "Ative seu plano Tlin para manter sua equipe e conversas com clientes disponíveis.",
+      "SUBSCRIBE": "Assinar agora",
+      "MODE": {
+        "TITLE": "Você está no modo de teste do Tlin",
+        "DESCRIPTION": "Explore todos os recursos e descubra como o Tlin pode organizar seu atendimento comercial.",
+        "DONT_SHOW_AGAIN": "Não mostrar novamente",
+        "CONTINUE": "Continuar no modo de teste",
+        "BANNER": "Modo de teste — {count} dias restantes"
+      }
+    },
     "DELETED_USER": "Deletar Usuário",
     "EMAIL_VERIFICATION_PENDING": "Parece que você ainda não verificou seu endereço de e-mail. Por favor, verifique sua caixa de entrada pelo e-mail de verificação.",
     "RESEND_VERIFICATION_MAIL": "Reenviar e-mail de verificação",
