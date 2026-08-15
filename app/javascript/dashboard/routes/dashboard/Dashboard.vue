@@ -219,12 +219,9 @@ export default {
           class="pointer-events-none absolute inset-x-0 top-3 z-20 flex justify-center px-4"
         >
           <div
-            class="pointer-events-auto flex items-center gap-2 rounded-full border border-n-weak bg-n-solid-1/95 px-4 py-2 text-sm font-medium text-n-slate-12"
+            class="pointer-events-auto flex items-center gap-2 rounded-full bg-tlin-gradient px-4 py-2 text-sm font-semibold text-n-black"
           >
-            <span
-              class="i-lucide-flask-conical inline-flex size-5 items-center justify-center rounded-full bg-tlin-gradient text-n-black"
-              aria-hidden="true"
-            />
+            <span class="i-lucide-clock-3 size-5 shrink-0" aria-hidden="true" />
             <span>
               {{
                 $t('APP_GLOBAL.TLIN_TRIAL.MODE.BANNER', {
