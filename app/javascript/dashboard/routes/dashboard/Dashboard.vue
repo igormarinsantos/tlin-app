@@ -263,6 +263,19 @@ export default {
         @close="closeTrialNotice"
         @confirm="confirmTrialNotice"
       >
+        <div
+          v-if="trialDaysRemaining !== null"
+          class="mb-4 flex items-center gap-2 rounded-full bg-tlin-gradient px-3 py-2 text-sm font-semibold text-n-black"
+        >
+          <span class="i-lucide-clock-3 size-4 shrink-0" aria-hidden="true" />
+          <span>
+            {{
+              $t('APP_GLOBAL.TLIN_TRIAL.DAYS_REMAINING', {
+                count: trialDaysRemaining,
+              })
+            }}
+          </span>
+        </div>
         <label class="flex items-center gap-3 text-sm text-n-slate-11">
           <input
             v-model="dontShowTrialNotice"
