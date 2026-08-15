@@ -330,9 +330,8 @@ export default {
     <!-- Regular Login Section -->
     <section
       v-else
-      class="w-full rounded-[1.5rem] border border-n-weak bg-white p-6 dark:bg-n-solid-2 sm:p-8"
+      class="w-full rounded-[1.5rem] border border-n-weak bg-white p-5 dark:bg-n-solid-2 sm:p-6"
       :class="{
-        'mb-8 mt-15': !showGoogleOAuth,
         'animate-wiggle': loginApi.hasErrored,
       }"
     >

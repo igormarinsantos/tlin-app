@@ -18,9 +18,9 @@ const { t } = useI18n();
       class="mx-auto grid h-full min-h-0 max-w-[1440px] grid-cols-1 overflow-hidden rounded-[2rem] bg-n-surface-1 lg:grid-cols-2"
     >
       <section
-        class="flex min-h-0 min-w-0 flex-col overflow-y-auto px-6 py-8 sm:px-10 lg:px-16 lg:py-12"
+        class="flex min-h-0 min-w-0 flex-col overflow-hidden px-6 py-5 sm:px-10 lg:px-14 lg:py-6"
       >
-        <header>
+        <header class="shrink-0">
           <img
             :src="logo"
             :alt="installationName"
@@ -34,19 +34,19 @@ const { t } = useI18n();
           />
         </header>
 
-        <div class="my-auto mx-auto w-full max-w-[30rem] py-8 lg:py-12">
+        <div class="my-auto mx-auto w-full max-w-[30rem] py-4 lg:py-6">
           <h1
-            class="text-center text-4xl font-semibold tracking-tight text-n-slate-12 sm:text-5xl"
+            class="text-center text-[clamp(2rem,5vh,3rem)] font-semibold leading-[1.05] tracking-tight text-n-slate-12"
           >
             {{ t('AUTH_LAYOUT.TITLE') }}
           </h1>
           <p
-            class="mx-auto mt-4 max-w-md text-center text-base leading-7 text-n-slate-11"
+            class="mx-auto mt-3 max-w-md text-center text-sm leading-6 text-n-slate-11 sm:text-base"
           >
             {{ t('AUTH_LAYOUT.SUBTITLE') }}
           </p>
 
-          <div class="mt-10 w-full">
+          <div class="mt-6 w-full lg:mt-8">
             <slot />
           </div>
         </div>
