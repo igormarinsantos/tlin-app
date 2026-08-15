@@ -18,6 +18,7 @@ import ArticleSearchPopover from 'dashboard/routes/dashboard/helpcenter/componen
 import CopilotEditorSection from './CopilotEditorSection.vue';
 import MessageSignatureMissingAlert from './MessageSignatureMissingAlert.vue';
 import ReplyBoxBanner from './ReplyBoxBanner.vue';
+import TlinCopilot from 'dashboard/components-next/tlin-copilot/TlinCopilot.vue';
 import QuotedEmailPreview from './QuotedEmailPreview.vue';
 import { REPLY_EDITOR_MODES } from 'dashboard/components/widgets/WootWriter/constants';
 import WootMessageEditor from 'dashboard/components/widgets/WootWriter/Editor.vue';
@@ -80,6 +81,7 @@ export default {
     QuotedEmailPreview,
     CopilotEditorSection,
     CopilotReplyBottomPanel,
+    TlinCopilot,
     ScheduledMessageModal,
   },
   mixins: [inboxMixin, fileUploadMixin, keyboardEventListenerMixins],
@@ -1378,6 +1380,11 @@ export default {
       this.message = acceptedMessage;
       this.setCopilotAcceptedMessage(acceptedMessage);
     },
+    insertTlinCopilotSuggestion(suggestion) {
+      this.message = [this.message.trim(), suggestion]
+        .filter(Boolean)
+        .join('\n\n');
+    },
   },
 };
 </script>
@@ -1526,6 +1533,14 @@ export default {
         />
       </div>
     </Transition>
+
+    <TlinCopilot
+      v-if="
+        conversationIdByRoute && !isEditorDisabled && !showAudioRecorderEditor
+      "
+      :conversation-id="conversationIdByRoute"
+      @insert="insertTlinCopilotSuggestion"
+    />
 
     <Transition
       mode="out-in"

@@ -445,6 +445,20 @@
     "ACTIVATE": "Ativar o Tlin",
     "AVAILABILITY": "Disponível para ativação. Fale com a gente."
   },
+  "TLIN_COPILOT": {
+    "TRIGGER": "Copiloto Tlin",
+    "TITLE": "Copiloto Tlin",
+    "THINKING": "Pensando...",
+    "COPY": "Copiar",
+    "COPIED": "Copiado",
+    "INSERT": "Inserir no editor",
+    "ERROR": "Não foi possível gerar uma sugestão agora. Tente novamente.",
+    "SKILLS": {
+      "SUMMARIZE": { "LABEL": "Resumir", "DESCRIPTION": "Resumo objetivo da conversa" },
+      "OBJECTION": { "LABEL": "Objeção", "DESCRIPTION": "Entenda e contorne a hesitação" },
+      "REPLY": { "LABEL": "Próxima resposta", "DESCRIPTION": "Sugira o próximo passo da venda" }
+    }
+  },
   "TLIN_ONBOARDING": {
     "STEP": "Etapa {current} de {total}",
     "CONTINUE": "Continuar",

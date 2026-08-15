@@ -471,6 +471,20 @@
     "ACTIVATE": "Activate Tlin",
     "AVAILABILITY": "Available for activation. Talk to us."
   },
+  "TLIN_COPILOT": {
+    "TRIGGER": "Tlin Copilot",
+    "TITLE": "Tlin Copilot",
+    "THINKING": "Thinking...",
+    "COPY": "Copy",
+    "COPIED": "Copied",
+    "INSERT": "Insert into editor",
+    "ERROR": "We could not generate a suggestion right now. Please try again.",
+    "SKILLS": {
+      "SUMMARIZE": { "LABEL": "Summarize", "DESCRIPTION": "An objective conversation summary" },
+      "OBJECTION": { "LABEL": "Objection", "DESCRIPTION": "Understand and address hesitation" },
+      "REPLY": { "LABEL": "Next reply", "DESCRIPTION": "Suggest the next sales step" }
+    }
+  },
   "TLIN_ONBOARDING": {
     "STEP": "Step {current} of {total}",
     "CONTINUE": "Continue",
