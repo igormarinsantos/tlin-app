@@ -487,42 +487,43 @@
   },
   "TLIN_ONBOARDING": {
     "STEP": "Step {current} of {total}",
-    "CONTINUE": "Continue",
-    "FINISH": "Finish",
-    "SKIP": "Skip for now",
+    "CONTINUE": "Next",
+    "FINISH": "Go to Tlin",
+    "BACK": "Back",
+    "SKIP": "Skip this question",
     "OTHER": "Other",
     "SELECT_PLACEHOLDER": "Select an option",
     "NAME": {
-      "TITLE": "What should we call you?",
-      "DESCRIPTION": "This helps us personalize your Tlin experience.",
+      "TITLE": "To start, what should we call you?",
+      "DESCRIPTION": "We will use your name to make your experience more personal.",
       "PLACEHOLDER": "Your name",
       "ERROR": "Tell us how we should call you."
     },
     "WHATSAPP": {
-      "TITLE": "Your WhatsApp",
-      "DESCRIPTION": "Use the international format, for example +5511999999999.",
-      "PLACEHOLDER": "+5511999999999",
-      "ERROR": "Enter a valid WhatsApp number in international format."
+      "TITLE": "Which WhatsApp do you use for work?",
+      "DESCRIPTION": "We detect your country automatically. Change the flag if needed and enter your number.",
+      "PLACEHOLDER": "Your number with area code",
+      "ERROR": "Enter a valid WhatsApp number."
     },
     "REFERRAL": {
-      "TITLE": "How did you hear about Tlin?",
-      "DESCRIPTION": "Optional — it helps us improve how we reach businesses like yours.",
+      "TITLE": "How did Tlin reach you?",
+      "DESCRIPTION": "It takes a few seconds and helps us reach more businesses like yours.",
       "GOOGLE": "Google",
       "INSTAGRAM": "Instagram",
       "REFERRAL": "Referral",
       "AD": "Ad"
     },
     "BUSINESS_TYPE": {
-      "TITLE": "What type of business do you have?",
-      "DESCRIPTION": "Optional — we will use this to tailor your future AI agent setup.",
+      "TITLE": "What type of business do you run?",
+      "DESCRIPTION": "This helps us prepare more useful suggestions for your operation.",
       "CLINIC": "Clinic",
       "STORE": "Store",
       "SERVICES": "Services",
       "AGENCY": "Agency"
     },
     "BUSINESS_OFFER": {
-      "TITLE": "What do you sell or offer?",
-      "DESCRIPTION": "Optional — a short description is enough.",
+      "TITLE": "What does your business sell or offer?",
+      "DESCRIPTION": "One sentence is enough. It helps Tlin understand your context.",
       "PLACEHOLDER": "For example: appointments, products or services"
     }
   },

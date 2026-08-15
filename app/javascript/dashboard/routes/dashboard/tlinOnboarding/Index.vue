@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -24,6 +24,25 @@ const leadWhatsapp = ref('');
 const referralSource = ref('');
 const businessType = ref('');
 const businessOffer = ref('');
+const isDraftRestored = ref(false);
+
+const onboardingDraftKey = computed(() => `tlin:onboarding:${accountId.value}`);
+
+const saveDraft = () => {
+  if (!isDraftRestored.value) return;
+
+  window.localStorage.setItem(
+    onboardingDraftKey.value,
+    JSON.stringify({
+      step: step.value,
+      leadContactName: leadContactName.value,
+      leadWhatsapp: leadWhatsapp.value,
+      referralSource: referralSource.value,
+      businessType: businessType.value,
+      businessOffer: businessOffer.value,
+    })
+  );
+};
 
 const referralOptions = computed(() => [
   { value: 'google', label: t('TLIN_ONBOARDING.REFERRAL.GOOGLE') },
@@ -76,6 +95,26 @@ const steps = computed(() => [
 
 const currentStep = computed(() => steps.value[step.value]);
 const isLastStep = computed(() => step.value === steps.value.length - 1);
+
+const restoreDraft = () => {
+  const savedDraft = window.localStorage.getItem(onboardingDraftKey.value);
+  if (!savedDraft) return;
+
+  try {
+    const draft = JSON.parse(savedDraft);
+    step.value = Number.isInteger(draft.step)
+      ? Math.min(Math.max(draft.step, 0), steps.value.length - 1)
+      : 0;
+    leadContactName.value = draft.leadContactName || '';
+    leadWhatsapp.value = draft.leadWhatsapp || '';
+    referralSource.value = draft.referralSource || '';
+    businessType.value = draft.businessType || '';
+    businessOffer.value = draft.businessOffer || '';
+  } catch {
+    window.localStorage.removeItem(onboardingDraftKey.value);
+  }
+};
+
 const validationError = computed(() =>
   currentStep.value.key === 'name'
     ? t('TLIN_ONBOARDING.NAME.ERROR')
@@ -86,6 +125,23 @@ const normalizedWhatsapp = computed(() =>
 );
 const isWhatsappValid = computed(() =>
   /^\+[1-9]\d{7,14}$/.test(normalizedWhatsapp.value)
+);
+
+onMounted(() => {
+  restoreDraft();
+  isDraftRestored.value = true;
+});
+
+watch(
+  [
+    step,
+    leadContactName,
+    leadWhatsapp,
+    referralSource,
+    businessType,
+    businessOffer,
+  ],
+  saveDraft
 );
 
 const isCurrentStepValid = () => {
@@ -118,6 +174,7 @@ const continueOnboarding = async () => {
       business_type: businessType.value,
       business_offer: businessOffer.value.trim(),
     });
+    window.localStorage.removeItem(onboardingDraftKey.value);
     store.commit('RESET_ONBOARDING', accountId.value);
     router.push(frontendURL(`accounts/${accountId.value}/dashboard`));
   } finally {
@@ -128,6 +185,11 @@ const continueOnboarding = async () => {
 const skipStep = () => {
   if (!isLastStep.value) step.value += 1;
   else continueOnboarding();
+};
+
+const goBack = () => {
+  showValidation.value = false;
+  step.value -= 1;
 };
 </script>
 
@@ -183,7 +245,7 @@ const skipStep = () => {
           />
           <div
             v-else-if="currentStep.key === 'referral'"
-            class="flex flex-wrap gap-3"
+            class="flex flex-col gap-3"
             role="group"
             :aria-label="currentStep.title"
           >
@@ -191,7 +253,7 @@ const skipStep = () => {
               v-for="option in referralOptions"
               :key="option.value"
               type="button"
-              class="rounded-full border border-n-weak px-4 py-3 text-sm font-medium text-n-slate-12 transition-colors hover:border-n-brand"
+              class="w-full rounded-full border border-n-weak px-4 py-3 text-left text-sm font-medium text-n-slate-12 transition-colors hover:border-n-brand"
               :class="
                 referralSource === option.value
                   ? 'bg-tlin-gradient border-transparent text-n-black'
@@ -205,7 +267,7 @@ const skipStep = () => {
           </div>
           <div
             v-else-if="currentStep.key === 'businessType'"
-            class="flex flex-wrap gap-3"
+            class="flex flex-col gap-3"
             role="group"
             :aria-label="currentStep.title"
           >
@@ -213,7 +275,7 @@ const skipStep = () => {
               v-for="option in businessTypeOptions"
               :key="option.value"
               type="button"
-              class="rounded-full border border-n-weak px-4 py-3 text-sm font-medium text-n-slate-12 transition-colors hover:border-n-brand"
+              class="w-full rounded-full border border-n-weak px-4 py-3 text-left text-sm font-medium text-n-slate-12 transition-colors hover:border-n-brand"
               :class="
                 businessType === option.value
                   ? 'bg-tlin-gradient border-transparent text-n-black'
@@ -241,6 +303,14 @@ const skipStep = () => {
 
           <div class="mt-8 flex flex-wrap items-center gap-3">
             <Button
+              v-if="step > 0"
+              color="slate"
+              variant="outline"
+              :label="$t('TLIN_ONBOARDING.BACK')"
+              size="lg"
+              @click="goBack"
+            />
+            <Button
               :is-loading="isSaving"
               :label="
                 isLastStep
@@ -248,6 +318,7 @@ const skipStep = () => {
                   : $t('TLIN_ONBOARDING.CONTINUE')
               "
               size="lg"
+              class="!bg-tlin-gradient !text-n-black"
               @click="continueOnboarding"
             />
             <Button
