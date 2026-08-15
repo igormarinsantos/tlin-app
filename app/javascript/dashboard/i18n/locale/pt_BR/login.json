@@ -27,6 +27,8 @@
     },
     "FORGOT_PASSWORD": "Esqueceu-se da sua senha?",
     "CREATE_NEW_ACCOUNT": "Criar nova conta",
+    "CONTINUE_WITH_EMAIL": "Continuar com e-mail",
+    "CHANGE_EMAIL": "Alterar e-mail",
     "SUBMIT": "Entrar",
     "SAML": {
       "LABEL": "Login via SSO",

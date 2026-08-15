@@ -8,7 +8,6 @@ defineProps({
 });
 
 const { t } = useI18n();
-const loginHero = '/brand-assets/login-hero.jpg';
 </script>
 
 <template>
@@ -35,13 +34,15 @@ const loginHero = '/brand-assets/login-hero.jpg';
           />
         </header>
 
-        <div class="my-auto w-full max-w-[30rem] py-8 lg:py-12">
+        <div class="my-auto mx-auto w-full max-w-[30rem] py-8 lg:py-12">
           <h1
-            class="text-4xl font-semibold tracking-tight text-n-slate-12 sm:text-5xl"
+            class="text-center text-4xl font-semibold tracking-tight text-n-slate-12 sm:text-5xl"
           >
             {{ t('AUTH_LAYOUT.TITLE') }}
           </h1>
-          <p class="mt-4 max-w-md text-base leading-7 text-n-slate-11">
+          <p
+            class="mx-auto mt-4 max-w-md text-center text-base leading-7 text-n-slate-11"
+          >
             {{ t('AUTH_LAYOUT.SUBTITLE') }}
           </p>
 
@@ -52,18 +53,7 @@ const loginHero = '/brand-assets/login-hero.jpg';
       </section>
 
       <aside class="hidden p-3 lg:block">
-        <div
-          class="relative h-full min-h-[640px] overflow-hidden rounded-[1.5rem] bg-tlin-gradient"
-        >
-          <img
-            :src="loginHero"
-            alt=""
-            class="h-full w-full object-cover opacity-90 mix-blend-soft-light"
-          />
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-n-slate-12/30 via-transparent to-white/10"
-          />
-        </div>
+        <div class="h-full min-h-[640px] rounded-[1.5rem] bg-tlin-gradient" />
       </aside>
     </div>
   </main>
