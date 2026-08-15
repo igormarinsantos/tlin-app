@@ -12,6 +12,8 @@ const { t } = useI18n();
 const router = useRouter();
 const store = useStore();
 const { accountId, finishOnboarding } = useAccount();
+const lightLogoUrl = '/brand-assets/logo.svg';
+const darkLogoUrl = '/brand-assets/logo_dark.svg';
 
 const step = ref(0);
 const isSaving = ref(false);
@@ -54,11 +56,21 @@ const steps = computed(() => [
 
 const currentStep = computed(() => steps.value[step.value]);
 const isLastStep = computed(() => step.value === steps.value.length - 1);
-const normalizedWhatsapp = computed(() => leadWhatsapp.value.replace(/\s/g, ''));
-const isWhatsappValid = computed(() => /^\+[1-9]\d{7,14}$/.test(normalizedWhatsapp.value));
+const validationError = computed(() =>
+  currentStep.value.key === 'name'
+    ? t('TLIN_ONBOARDING.NAME.ERROR')
+    : t('TLIN_ONBOARDING.WHATSAPP.ERROR')
+);
+const normalizedWhatsapp = computed(() =>
+  leadWhatsapp.value.replace(/\s/g, '')
+);
+const isWhatsappValid = computed(() =>
+  /^\+[1-9]\d{7,14}$/.test(normalizedWhatsapp.value)
+);
 
 const isCurrentStepValid = () => {
-  if (currentStep.value.key === 'name') return leadContactName.value.trim().length > 0;
+  if (currentStep.value.key === 'name')
+    return leadContactName.value.trim().length > 0;
   if (currentStep.value.key === 'whatsapp') return isWhatsappValid.value;
   return true;
 };
@@ -100,23 +112,80 @@ const skipStep = () => {
 </script>
 
 <template>
-  <main class="flex flex-1 items-center justify-center w-full min-h-full p-4 sm:p-8">
-    <section class="w-full max-w-xl overflow-hidden rounded-[2rem] border border-n-weak bg-n-solid-1 shadow-xl shadow-n-slate-12/5">
-      <div class="h-2 bg-tlin-gradient" />
-      <div class="p-6 sm:p-10">
-        <p class="text-sm font-medium text-n-slate-10">
-          {{ $t('TLIN_ONBOARDING.STEP', { current: step + 1, total: steps.length }) }}
+  <main class="grid min-h-full w-full bg-n-background lg:grid-cols-2">
+    <section
+      class="flex min-h-[42vh] flex-col bg-n-solid-1 px-6 py-8 sm:px-10 lg:min-h-full lg:px-16 lg:py-12"
+    >
+      <header>
+        <img
+          :src="lightLogoUrl"
+          alt="Tlin"
+          class="block h-8 w-auto dark:hidden"
+        />
+        <img
+          :src="darkLogoUrl"
+          alt="Tlin"
+          class="hidden h-8 w-auto dark:block"
+        />
+      </header>
+
+      <div class="my-auto max-w-xl py-10 lg:py-16">
+        <div
+          class="mb-8 flex size-12 items-center justify-center rounded-full bg-tlin-gradient text-n-black"
+        >
+          <span class="i-lucide-sparkles size-6" aria-hidden="true" />
+        </div>
+        <p class="text-sm font-semibold text-n-slate-10">
+          {{
+            $t('TLIN_ONBOARDING.STEP', {
+              current: step + 1,
+              total: steps.length,
+            })
+          }}
         </p>
-        <h1 class="mt-4 text-3xl font-bold tracking-tight text-n-slate-12 sm:text-4xl">
+        <h1
+          class="mt-4 text-4xl font-semibold leading-tight tracking-tight text-n-slate-12 sm:text-5xl"
+        >
           {{ currentStep.title }}
         </h1>
-        <p class="mt-3 text-base text-n-slate-11">{{ currentStep.description }}</p>
+        <p class="mt-5 max-w-lg text-base leading-7 text-n-slate-11 sm:text-lg">
+          {{ currentStep.description }}
+        </p>
+      </div>
 
-        <div class="mt-8">
+      <div class="flex gap-2" aria-hidden="true">
+        <span
+          v-for="(_, index) in steps"
+          :key="index"
+          class="h-1.5 flex-1 rounded-full"
+          :class="index <= step ? 'bg-tlin-gradient' : 'bg-n-alpha-3'"
+        />
+      </div>
+    </section>
+
+    <section
+      class="flex min-h-[58vh] items-center bg-n-background px-6 py-10 sm:px-10 lg:min-h-full lg:px-16 lg:py-12"
+    >
+      <div class="mx-auto w-full max-w-md">
+        <div class="mb-8 flex items-center justify-between">
+          <span class="text-sm font-medium text-n-slate-10">
+            {{ $t('TLIN_ONBOARDING.BRAND') }}
+          </span>
+          <span
+            class="inline-flex size-9 items-center justify-center rounded-full bg-n-alpha-2 text-n-slate-11"
+          >
+            <span class="i-lucide-sparkles size-4" aria-hidden="true" />
+          </span>
+        </div>
+
+        <div
+          class="rounded-[2rem] border border-n-weak bg-n-solid-1 p-6 sm:p-8"
+        >
           <input
             v-if="currentStep.key === 'name'"
             v-model="leadContactName"
             class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            :aria-label="currentStep.title"
             :placeholder="$t('TLIN_ONBOARDING.NAME.PLACEHOLDER')"
             autocomplete="name"
             @keyup.enter="continueOnboarding"
@@ -125,6 +194,7 @@ const skipStep = () => {
             v-else-if="currentStep.key === 'whatsapp'"
             v-model="leadWhatsapp"
             class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            :aria-label="currentStep.title"
             :placeholder="$t('TLIN_ONBOARDING.WHATSAPP.PLACEHOLDER')"
             autocomplete="tel"
             inputmode="tel"
@@ -134,11 +204,20 @@ const skipStep = () => {
             v-else-if="currentStep.key === 'referral'"
             v-model="referralSource"
             class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            :aria-label="currentStep.title"
           >
-            <option value="">{{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}</option>
-            <option value="google">Google</option>
-            <option value="instagram">Instagram</option>
-            <option value="referral">{{ $t('TLIN_ONBOARDING.REFERRAL.REFERRAL') }}</option>
+            <option value="">
+              {{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}
+            </option>
+            <option value="google">
+              {{ $t('TLIN_ONBOARDING.REFERRAL.GOOGLE') }}
+            </option>
+            <option value="instagram">
+              {{ $t('TLIN_ONBOARDING.REFERRAL.INSTAGRAM') }}
+            </option>
+            <option value="referral">
+              {{ $t('TLIN_ONBOARDING.REFERRAL.REFERRAL') }}
+            </option>
             <option value="ad">{{ $t('TLIN_ONBOARDING.REFERRAL.AD') }}</option>
             <option value="other">{{ $t('TLIN_ONBOARDING.OTHER') }}</option>
           </select>
@@ -146,39 +225,58 @@ const skipStep = () => {
             v-else-if="currentStep.key === 'businessType'"
             v-model="businessType"
             class="h-12 w-full rounded-full border border-n-weak bg-n-background px-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            :aria-label="currentStep.title"
           >
-            <option value="">{{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}</option>
-            <option value="clinic">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.CLINIC') }}</option>
-            <option value="store">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.STORE') }}</option>
-            <option value="services">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.SERVICES') }}</option>
-            <option value="agency">{{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.AGENCY') }}</option>
+            <option value="">
+              {{ $t('TLIN_ONBOARDING.SELECT_PLACEHOLDER') }}
+            </option>
+            <option value="clinic">
+              {{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.CLINIC') }}
+            </option>
+            <option value="store">
+              {{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.STORE') }}
+            </option>
+            <option value="services">
+              {{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.SERVICES') }}
+            </option>
+            <option value="agency">
+              {{ $t('TLIN_ONBOARDING.BUSINESS_TYPE.AGENCY') }}
+            </option>
             <option value="other">{{ $t('TLIN_ONBOARDING.OTHER') }}</option>
           </select>
           <textarea
             v-else
             v-model="businessOffer"
             class="min-h-32 w-full rounded-[1.5rem] border border-n-weak bg-n-background p-5 text-base text-n-slate-12 outline-none focus:border-n-brand"
+            :aria-label="currentStep.title"
             :placeholder="$t('TLIN_ONBOARDING.BUSINESS_OFFER.PLACEHOLDER')"
           />
-          <p v-if="showValidation" class="mt-3 text-sm font-medium text-n-ruby-11">
-            {{ $t(`TLIN_ONBOARDING.${currentStep.key === 'name' ? 'NAME' : 'WHATSAPP'}.ERROR`) }}
+          <p
+            v-if="showValidation"
+            class="mt-3 text-sm font-medium text-n-ruby-11"
+          >
+            {{ validationError }}
           </p>
-        </div>
 
-        <div class="mt-8 flex flex-wrap items-center gap-3">
-          <Button
-            :is-loading="isSaving"
-            :label="isLastStep ? $t('TLIN_ONBOARDING.FINISH') : $t('TLIN_ONBOARDING.CONTINUE')"
-            size="lg"
-            @click="continueOnboarding"
-          />
-          <Button
-            v-if="!currentStep.required"
-            variant="ghost"
-            :label="$t('TLIN_ONBOARDING.SKIP')"
-            size="lg"
-            @click="skipStep"
-          />
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <Button
+              :is-loading="isSaving"
+              :label="
+                isLastStep
+                  ? $t('TLIN_ONBOARDING.FINISH')
+                  : $t('TLIN_ONBOARDING.CONTINUE')
+              "
+              size="lg"
+              @click="continueOnboarding"
+            />
+            <Button
+              v-if="!currentStep.required"
+              variant="ghost"
+              :label="$t('TLIN_ONBOARDING.SKIP')"
+              size="lg"
+              @click="skipStep"
+            />
+          </div>
         </div>
       </div>
     </section>

@@ -460,6 +460,7 @@
     }
   },
   "TLIN_ONBOARDING": {
+    "BRAND": "tlin.ai",
     "STEP": "Etapa {current} de {total}",
     "CONTINUE": "Continuar",
     "FINISH": "Concluir",
@@ -481,6 +482,8 @@
     "REFERRAL": {
       "TITLE": "Como você conheceu o Tlin?",
       "DESCRIPTION": "Opcional — isso nos ajuda a melhorar como chegamos a negócios como o seu.",
+      "GOOGLE": "Google",
+      "INSTAGRAM": "Instagram",
       "REFERRAL": "Indicação",
       "AD": "Anúncio"
     },
