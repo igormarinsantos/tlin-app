@@ -186,6 +186,7 @@ export default {
         v-if="conversationId && !isEditorDisabled && !disabled"
         :conversation-id="conversationId"
         placement="top"
+        result-placement="drawer"
         :disabled="disabled"
         @insert="$emit('insertTlinCopilotSuggestion', $event)"
       />

@@ -13,6 +13,11 @@ const props = defineProps({
     default: 'bottom',
     validator: value => ['top', 'bottom'].includes(value),
   },
+  resultPlacement: {
+    type: String,
+    default: 'inline',
+    validator: value => ['drawer', 'inline'].includes(value),
+  },
 });
 
 const emit = defineEmits(['insert']);
@@ -22,6 +27,8 @@ const activeSkill = ref('');
 const suggestion = ref('');
 const error = ref('');
 const copied = ref(false);
+const isPanelOpen = ref(false);
+const selectedSkillKey = ref('');
 
 const skills = computed(() => [
   {
@@ -43,16 +50,29 @@ const skills = computed(() => [
 
 const isThinking = computed(() => !!activeSkill.value);
 const isTopPlacement = computed(() => props.placement === 'top');
+const isDrawerResult = computed(() => props.resultPlacement === 'drawer');
+const selectedSkill = computed(
+  () =>
+    skills.value.find(skill => skill.key === activeSkill.value) ||
+    skills.value.find(skill => skill.key === selectedSkillKey.value)
+);
 const menuPositionClass = computed(() =>
   isTopPlacement.value ? 'right-0 top-full mt-2' : 'bottom-full left-0 mb-2'
 );
-const panelPositionClass = computed(() =>
-  isTopPlacement.value ? 'absolute right-0 top-full z-40 mt-2 w-80' : 'mt-3'
-);
+const panelPositionClass = computed(() => {
+  if (isDrawerResult.value) {
+    return 'fixed inset-y-3 right-3 z-50 flex w-[min(28rem,calc(100vw-1.5rem))] flex-col !shadow-none sm:inset-y-5 sm:right-5';
+  }
+  if (isTopPlacement.value) return 'absolute right-0 top-full z-40 mt-2 w-80';
+
+  return 'mt-3';
+});
 
 const generate = async skill => {
   activeSkill.value = skill.key;
+  selectedSkillKey.value = skill.key;
   isMenuOpen.value = false;
+  isPanelOpen.value = true;
   error.value = '';
   copied.value = false;
 
@@ -79,8 +99,10 @@ const insertSuggestion = () => {
 };
 
 const closeSuggestion = () => {
+  isPanelOpen.value = false;
   suggestion.value = '';
   error.value = '';
+  selectedSkillKey.value = '';
 };
 </script>
 
@@ -116,8 +138,8 @@ const closeSuggestion = () => {
       </button>
     </div>
 
-    <div
-      v-if="isThinking || suggestion || error"
+    <aside
+      v-if="isPanelOpen"
       class="rounded-2xl border border-n-weak bg-n-solid-1 p-4 shadow-lg shadow-black/10"
       :class="panelPositionClass"
     >
@@ -129,7 +151,7 @@ const closeSuggestion = () => {
             class="i-lucide-sparkles size-4 text-n-brand"
             aria-hidden="true"
           />
-          {{ $t('TLIN_COPILOT.TITLE') }}
+          {{ selectedSkill?.label || $t('TLIN_COPILOT.TITLE') }}
         </div>
         <button
           type="button"
@@ -141,40 +163,42 @@ const closeSuggestion = () => {
         </button>
       </div>
 
-      <div
-        v-if="isThinking"
-        class="mt-3 flex items-center gap-2 text-sm text-n-slate-11"
-      >
-        <span
-          class="i-lucide-loader-circle size-4 animate-spin"
-          aria-hidden="true"
-        />
-        {{ $t('TLIN_COPILOT.THINKING') }}
-      </div>
-      <p v-else-if="error" class="mt-3 text-sm text-n-ruby-11">{{ error }}</p>
-      <template v-else>
-        <p class="mt-3 whitespace-pre-wrap text-sm leading-6 text-n-slate-12">
-          {{ suggestion }}
-        </p>
-        <div class="mt-4 flex flex-wrap gap-2">
-          <Button
-            icon="i-lucide-clipboard"
-            :label="
-              copied ? $t('TLIN_COPILOT.COPIED') : $t('TLIN_COPILOT.COPY')
-            "
-            color="slate"
-            variant="faded"
-            size="sm"
-            @click="copySuggestion"
+      <div class="mt-3 min-h-0 flex-1 overflow-y-auto pr-1">
+        <div
+          v-if="isThinking"
+          class="flex items-center gap-2 text-sm text-n-slate-11"
+        >
+          <span
+            class="i-lucide-loader-circle size-4 animate-spin"
+            aria-hidden="true"
           />
-          <Button
-            icon="i-lucide-arrow-down-to-line"
-            :label="$t('TLIN_COPILOT.INSERT')"
-            size="sm"
-            @click="insertSuggestion"
-          />
+          {{ $t('TLIN_COPILOT.THINKING') }}
         </div>
-      </template>
-    </div>
+        <p v-else-if="error" class="text-sm text-n-ruby-11">{{ error }}</p>
+        <template v-else>
+          <p class="whitespace-pre-wrap text-sm leading-6 text-n-slate-12">
+            {{ suggestion }}
+          </p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <Button
+              icon="i-lucide-clipboard"
+              :label="
+                copied ? $t('TLIN_COPILOT.COPIED') : $t('TLIN_COPILOT.COPY')
+              "
+              color="slate"
+              variant="faded"
+              size="sm"
+              @click="copySuggestion"
+            />
+            <Button
+              icon="i-lucide-arrow-down-to-line"
+              :label="$t('TLIN_COPILOT.INSERT')"
+              size="sm"
+              @click="insertSuggestion"
+            />
+          </div>
+        </template>
+      </div>
+    </aside>
   </div>
 </template>
