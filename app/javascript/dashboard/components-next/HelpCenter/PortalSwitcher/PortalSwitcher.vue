@@ -157,7 +157,7 @@ const redirectToPortalHomePage = () => {
           :src="getPortalThumbnailSrc(portal)"
           :size="20"
           icon-name="i-lucide-building-2"
-          rounded-full
+          :rounded-full="false"
         />
       </Button>
     </div>

@@ -47,6 +47,7 @@ const formattedLastActivityAt = computed(() => {
         class="shrink-0"
         :name="name"
         :size="42"
+        :rounded-full="false"
         hide-offline-status
       />
       <div class="flex flex-col gap-0.5 flex-1 min-w-0">
