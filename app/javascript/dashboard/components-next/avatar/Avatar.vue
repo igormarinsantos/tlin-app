@@ -26,7 +26,7 @@ const props = defineProps({
   },
   roundedFull: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   status: {
     type: String,

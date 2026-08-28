@@ -239,6 +239,7 @@ const handleAvatarDelete = () => {
         :src="state.logoUrl"
         :name="state.name"
         :size="72"
+        :rounded-full="false"
         allow-upload
         icon-name="i-lucide-building-2"
         @upload="handleAvatarUpload"
