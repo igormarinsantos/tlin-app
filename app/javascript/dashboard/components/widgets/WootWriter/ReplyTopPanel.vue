@@ -1,5 +1,5 @@
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import { useCaptain } from 'dashboard/composables/useCaptain';
 import { useTrack } from 'dashboard/composables';
@@ -9,6 +9,7 @@ import { CAPTAIN_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import EditorModeToggle from './EditorModeToggle.vue';
 import CopilotMenuBar from './CopilotMenuBar.vue';
+import TlinCopilot from 'dashboard/components-next/tlin-copilot/TlinCopilot.vue';
 
 export default {
   name: 'ReplyTopPanel',
@@ -16,6 +17,7 @@ export default {
     NextButton,
     EditorModeToggle,
     CopilotMenuBar,
+    TlinCopilot,
   },
   directives: {
     OnClickOutside: vOnClickOutside,
@@ -58,7 +60,12 @@ export default {
       default: false,
     },
   },
-  emits: ['setReplyMode', 'toggleEditorSize', 'executeCopilotAction'],
+  emits: [
+    'setReplyMode',
+    'toggleEditorSize',
+    'executeCopilotAction',
+    'insertTlinCopilotSuggestion',
+  ],
   setup(props, { emit }) {
     const setReplyMode = mode => {
       emit('setReplyMode', mode);
@@ -79,6 +86,12 @@ export default {
     };
 
     const { captainTasksEnabled } = useCaptain();
+    const isCaptainGloballyEnabled =
+      window.globalConfig?.CAPTAIN_ENABLED === true ||
+      window.globalConfig?.CAPTAIN_ENABLED === 'true';
+    const showNativeCaptainTools = computed(
+      () => isCaptainGloballyEnabled && captainTasksEnabled.value
+    );
     const showCopilotMenu = ref(false);
     const copilotToggleRef = ref(null);
 
@@ -120,6 +133,7 @@ export default {
       handleNoteClick,
       REPLY_EDITOR_MODES,
       captainTasksEnabled,
+      showNativeCaptainTools,
       handleCopilotAction,
       showCopilotMenu,
       copilotToggleRef,
@@ -167,8 +181,15 @@ export default {
         </span>
       </div>
     </div>
-    <div v-if="captainTasksEnabled" class="flex items-center gap-2">
-      <div class="relative">
+    <div class="flex items-center gap-2">
+      <TlinCopilot
+        v-if="conversationId && !isEditorDisabled && !disabled"
+        :conversation-id="conversationId"
+        placement="top"
+        :disabled="disabled"
+        @insert="$emit('insertTlinCopilotSuggestion', $event)"
+      />
+      <div v-if="showNativeCaptainTools" class="relative">
         <NextButton
           ref="copilotToggleRef"
           ghost

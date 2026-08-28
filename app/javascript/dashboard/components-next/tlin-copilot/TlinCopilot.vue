@@ -7,6 +7,12 @@ import TlinCopilotApi from 'dashboard/api/tlinCopilot';
 
 const props = defineProps({
   conversationId: { type: [String, Number], required: true },
+  disabled: { type: Boolean, default: false },
+  placement: {
+    type: String,
+    default: 'bottom',
+    validator: value => ['top', 'bottom'].includes(value),
+  },
 });
 
 const emit = defineEmits(['insert']);
@@ -36,6 +42,13 @@ const skills = computed(() => [
 ]);
 
 const isThinking = computed(() => !!activeSkill.value);
+const isTopPlacement = computed(() => props.placement === 'top');
+const menuPositionClass = computed(() =>
+  isTopPlacement.value ? 'right-0 top-full mt-2' : 'bottom-full left-0 mb-2'
+);
+const panelPositionClass = computed(() =>
+  isTopPlacement.value ? 'absolute right-0 top-full z-40 mt-2 w-80' : 'mt-3'
+);
 
 const generate = async skill => {
   activeSkill.value = skill.key;
@@ -72,17 +85,19 @@ const closeSuggestion = () => {
 </script>
 
 <template>
-  <div class="relative mt-3">
+  <div class="relative" :class="{ 'mt-3': !isTopPlacement }">
     <Button
       icon="i-lucide-sparkles"
       :label="$t('TLIN_COPILOT.TRIGGER')"
       size="sm"
+      :disabled="disabled"
       @click="isMenuOpen = !isMenuOpen"
     />
 
     <div
       v-if="isMenuOpen"
-      class="absolute bottom-full left-0 z-30 mb-2 w-80 rounded-2xl border border-n-weak bg-n-solid-1 p-2 shadow-xl shadow-black/20"
+      class="absolute z-40 w-80 rounded-2xl border border-n-weak bg-n-solid-1 p-2 shadow-xl shadow-black/20"
+      :class="menuPositionClass"
     >
       <button
         v-for="skill in skills"
@@ -103,7 +118,8 @@ const closeSuggestion = () => {
 
     <div
       v-if="isThinking || suggestion || error"
-      class="mt-3 rounded-2xl border border-n-weak bg-n-solid-1 p-4 shadow-lg shadow-black/10"
+      class="rounded-2xl border border-n-weak bg-n-solid-1 p-4 shadow-lg shadow-black/10"
+      :class="panelPositionClass"
     >
       <div class="flex items-center justify-between gap-3">
         <div
